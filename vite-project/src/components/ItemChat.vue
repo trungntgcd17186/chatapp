@@ -31,42 +31,56 @@ const groupName = members?.map((x: UserInfo) => x.first_name).join(", ");
       { 'bg-[#0000001a]': isMouseDown },
     ]"
   >
-    <div v-for="item in members" :key="item.id">
+    <div v-if="members.length === 1">
       <SingleChat
-        v-if="members.length === 1"
-        :id="item.id"
-        :avatar="item.avatar || ''"
-        :first_name="item.first_name"
-        :last_name="item.last_name"
+        :id="members[0]?.id"
+        :avatar="members[0].avatar || ''"
+        :first_name="members[0].first_name"
+        :last_name="members[0].last_name"
         :lastMessage="lastMessage"
         :isTyping="isTyping"
         :conversationTyping="conversationTyping"
         :conversationId="conversationId"
         :nameUserLastMessage="nameUserLastMessage"
       />
-
-      <img
-        v-else
-        :src="item?.avatar || `https://i.pravatar.cc/150?img=${item.id}`"
-        class="w-12 h-12 rounded-full"
-        alt="Avatar"
-      />
     </div>
-    <div v-if="members.length > 1">
-      <div class="text-base font-medium capitalize">
-        {{ groupName }}
+    <div v-else class="flex items-center gap-[10px]">
+      <div class="relative w-[48px] h-[48px]">
+        <img
+          :src="
+            members[0]?.avatar ||
+            `https://i.pravatar.cc/150?img=${members[0]?.id}`
+          "
+          class="absolute left-0 bottom-0 w-[32px] h-[32px] rounded-full z-10"
+          alt="Avatar"
+        />
+        <img
+          :src="
+            members[1]?.avatar ||
+            `https://i.pravatar.cc/150?img=${members[1]?.id}`
+          "
+          class="absolute right-0 top-0 w-[32px] h-[32px] rounded-full z-0"
+          alt="Avatar"
+        />
       </div>
-
-      <TypingAnimation
-        v-if="isTyping && conversationTyping == conversationId"
-      />
-
-      <div v-else class="flex gap-1">
-        <div class="text-xs text-gray-500 capitalize">
-          {{ nameUserLastMessage + ":" }}
+      <div>
+        <div class="text-base font-medium capitalize">
+          {{ groupName }}
         </div>
-        <div class="text-xs text-gray-500 text-ellipsis overflow-hidden whitespace-nowrap max-w-[140px]">
-          {{ lastMessage }}
+
+        <TypingAnimation
+          v-if="isTyping && conversationTyping == conversationId"
+        />
+
+        <div v-else class="mt-1 flex gap-1">
+          <div class="text-[13px] text-gray-500 capitalize">
+            {{ nameUserLastMessage + ":" }}
+          </div>
+          <div
+            class="text-[13px] text-gray-500 text-ellipsis overflow-hidden whitespace-nowrap max-w-[140px]"
+          >
+            {{ lastMessage }}
+          </div>
         </div>
       </div>
     </div>

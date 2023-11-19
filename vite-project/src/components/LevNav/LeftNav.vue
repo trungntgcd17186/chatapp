@@ -4,9 +4,9 @@ import { ListItem } from "../../constant";
 import { ref } from "vue";
 import { loggedUserInfo } from "../../globalState";
 import Menu from "../Menu.vue";
+import IconWrapper from "../IconWrapper.vue";
 
 const idActive = ref(1);
-const isMouseDown = ref(false);
 </script>
 
 <template>
@@ -36,16 +36,7 @@ const isMouseDown = ref(false);
         </div>
       </div>
 
-      <div
-        :class="[
-          'flex items-center justify-center w-9 h-9 rounded-full cursor-pointer',
-          { 'bg-[#0000002a]': isMouseDown },
-          { 'bg-[#0000000a]': !isMouseDown },
-          { 'hover:bg-[#0000001a]': !isMouseDown },
-        ]"
-        @mousedown="isMouseDown = true"
-        @mouseup="isMouseDown = false"
-      >
+      <IconWrapper>
         <svg
           viewBox="6 6 24 24"
           fill="currentColor"
@@ -64,7 +55,7 @@ const isMouseDown = ref(false);
             d="M9 8a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h18a3 3 0 0 0 3-3V11a3 3 0 0 0-3-3H9zm6 3a.5.5 0 0 0-.5-.5H9a.5.5 0 0 0-.5.5v14a.5.5 0 0 0 .5.5h5.5a.5.5 0 0 0 .5-.5V11zm3-.5a.5.5 0 0 0-.5.5v14a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5V11a.5.5 0 0 0-.5-.5h-9z"
           ></path>
         </svg>
-      </div>
+      </IconWrapper>
     </div>
   </div>
 </template>

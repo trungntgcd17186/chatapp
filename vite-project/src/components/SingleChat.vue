@@ -16,10 +16,10 @@ defineProps<{
 </script>
 
 <template>
-  <div class="flex gap-4">
+  <div class="flex items-center gap-[10px]">
     <img
       :src="avatar || `https://i.pravatar.cc/150?img=${id}`"
-      class="w-12 h-12 rounded-full"
+      class="w-[48px] h-[48px] rounded-full"
       alt="Avatar"
     />
     <div>
@@ -29,11 +29,11 @@ defineProps<{
       <TypingAnimation
         v-if="isTyping && conversationTyping == conversationId"
       />
-      <div v-else class="flex gap-1">
-        <div class="text-xs text-gray-500 capitalize">
+      <div v-else class="mt-1 flex gap-1">
+        <div class="text-[13px] text-gray-500 capitalize">
           {{ nameUserLastMessage + ":" }}
         </div>
-        <div class="text-xs text-gray-500">
+        <div class="text-[13px] text-gray-500">
           {{ lastMessage }}
         </div>
       </div>
