@@ -11,7 +11,7 @@ const routes = [
     path: "/logout",
     component: {
       render: () => null,
-      beforeRouteEnter(to, from, next) {
+      beforeRouteEnter(to: any, from: any, next: any) {
         cookies.remove("access_token");
         next("/login");
       },
@@ -45,11 +45,13 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, _, next) => {
+router.beforeEach((to: any, _, next) => {
   const access_token = cookies.get("access_token");
-  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
+  const requiresAuth = to.matched.some(
+    (record: any) => record.meta.requiresAuth
+  );
   const requiresNoAuth = to.matched.some(
-    (record) => record.meta.requiresNoAuth
+    (record: any) => record.meta.requiresNoAuth
   );
 
   if (requiresAuth && !access_token) {

@@ -28,6 +28,11 @@ export class AppGateway
       this.server.to(payload.conversation_id).emit('recMessage', payload);
   }
 
+  @SubscribeMessage('onTypingMessage')
+  async handleTypingMessage(client: Socket, payload: any): Promise<void> {
+    this.server.to(payload.conversationId).emit('onTypingMessage', payload);
+  }
+
   afterInit(server: Server) {
     console.log(server);
     //Do stuffs

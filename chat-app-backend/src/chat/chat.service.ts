@@ -5,7 +5,7 @@ import { UserInfoDto } from 'src/dtos/user.dto';
 import { Conversation } from 'src/entities/conversation.entity';
 import { Message } from 'src/entities/message.entity';
 import { Users } from 'src/entities/users.entity';
-import { Repository } from 'typeorm';
+import { Repository, getConnection } from 'typeorm';
 import { Socket } from 'socket.io';
 
 @Injectable()
@@ -46,7 +46,14 @@ export class ChatService {
     try {
       const conversations = await this.conversationRepository
         .createQueryBuilder('conversation')
-        .innerJoinAndSelect('conversation.members', 'members')
+        .leftJoinAndSelect('conversation.members', 'members')
+        .leftJoinAndSelect(
+          'conversation.messages',
+          'messages',
+          'messages.id = ' +
+            '(SELECT m.id FROM message m WHERE m.conversationId = conversation.id ORDER BY m.created_at DESC LIMIT 1)',
+        )
+        .leftJoinAndSelect('messages.user', 'messageUser')
         .where(
           'conversation.id IN ' +
             '(SELECT conversationId FROM conversation_members_users WHERE usersId = :loggedUserId)',
@@ -102,7 +109,7 @@ export class ChatService {
       .createQueryBuilder('message')
       .leftJoinAndSelect('message.user', 'users')
       .where('message.conversationId = :conversationId', { conversationId })
-      .orderBy('message.id', 'DESC')
+      .orderBy('message.created_at', 'DESC')
       .take(20)
       .getMany();
 

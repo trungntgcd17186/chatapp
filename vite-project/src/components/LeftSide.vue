@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Button } from "ant-design-vue";
-import { computed, watchEffect } from "vue";
+import { ref, watchEffect } from "vue";
+import { useRoute } from "vue-router";
 import { loggedUserInfo } from "../globalState";
 import useGetListConversation from "../hooks/useGetListConversation";
 import router from "../router";
@@ -8,25 +9,68 @@ import { UserInfo } from "../type";
 import ItemChat from "./ItemChat.vue";
 import Menu from "./Menu.vue";
 
+const { noti } = defineProps<{
+  noti: {
+    [key: string]: {
+      count: number;
+      lastMessage: string;
+      userFirstName: string;
+    };
+  };
+  isTyping: boolean;
+  conversationTyping: number | null;
+}>();
 
-const activeId = computed(() => router?.currentRoute?.value?.params?.id)
+const route = useRoute();
+const activeId = ref(+route.params.id);
 const listConversation = useGetListConversation();
 
 watchEffect(() => {
-  if (!activeId?.value && listConversation?.value?.[0]?.id) {
+  if (!activeId.value && listConversation?.value?.[0]?.id) {
     router.push(`/${listConversation.value[0].id}`);
   }
 });
+
+const getNotiCount = (id: number) => {
+  if (id == +route?.params?.id) {
+    if (noti?.[id]?.count > 0) noti[id].count = 0;
+    return 0;
+  } else return noti?.[id]?.count;
+};
 </script>
 
-
 <template>
-  <div class="leftSide w-[364px]">
+  <div class="leftSide w-[364px] border-x border-[#0000001a]">
     <div
-      class="header fixed w-[364px] flex items-center gap-2 px-4 py-2 h-[56px] border-r border-gray-300"
+      class="header fixed w-[364px] flex flex-col items-center gap-2 px-4 pt-3 h-[94px] border-r border-gray-300"
     >
-      <Menu />
-      <div class="relative text-gray-600 focus-within:text-gray-400 flex-1">
+      <div class="w-full h-36px flex justify-between items-center">
+        <h1 class="ml-3 text-[24px] font-[600]">Chat</h1>
+
+        <div
+          class="flex items-center justify-center w-9 h-9 rounded-full bg-[#0000000a] hover:bg-[#0000001a] cursor-pointer"
+        >
+          <svg
+            viewBox="6 6 24 24"
+            fill="currentColor"
+            width="20"
+            height="20"
+            class="x19dipnz x1lliihq x1k90msu x2h7rmj x1qfuztq"
+            overflow="visible"
+            style="--color: var(--primary-icon)"
+          >
+            <path
+              d="M17.305 16.57a1.998 1.998 0 0 0-.347.467l-1.546 2.87a.5.5 0 0 0 .678.677l2.87-1.545c.171-.093.328-.21.466-.347l8.631-8.631a1.5 1.5 0 1 0-2.121-2.122l-8.631 8.632z"
+            ></path>
+            <path
+              d="M18 10.5a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-6a4 4 0 0 0-4 4v12a4 4 0 0 0 4 4h12a4 4 0 0 0 4-4v-6a1 1 0 0 0-1-1h-.5a1 1 0 0 0-1 1v6a1.5 1.5 0 0 1-1.5 1.5H12a1.5 1.5 0 0 1-1.5-1.5V12a1.5 1.5 0 0 1 1.5-1.5h6z"
+            ></path>
+          </svg>
+        </div>
+      </div>
+      <div
+        class="w-full relative text-gray-600 focus-within:text-gray-400 flex-1"
+      >
         <span class="absolute inset-y-0 left-0 flex items-center pl-4">
           <button type="submit" class="focus:outline-none focus:shadow-outline">
             <svg
@@ -47,19 +91,32 @@ watchEffect(() => {
           type="search"
           name="q"
           class="rounded-full w-full py-2 text-sm bg-[#f5f5f5] pl-12 focus:outline-none text-[#707991] placeholder-[#707991]"
-          placeholder="Search"
+          placeholder="Tìm kiếm trên Messenger"
           autocomplete="off"
         />
       </div>
     </div>
-    <div class="chat-history overflow-y-auto mt-[56px] w-[364px]">
+    <div class="chat-history overflow-y-auto mt-[100px] w-[364px] px-2">
       <ItemChat
         v-for="item in listConversation"
         :key="item.id"
         :conversationId="item.id"
-        :lastMessage="item?.last_message"
+        :lastMessage="noti?.[item.id]?.lastMessage || item?.messages?.[0]?.text"
+        :nameUserLastMessage="
+          noti?.[item.id]?.userFirstName ||
+          item?.messages?.[0]?.user?.first_name
+        "
         :members="item?.members?.filter((x: UserInfo) => x.id != loggedUserInfo.id)"
-        v-model:activeId="activeId"
+        :isActive="activeId == item.id"
+        @click="
+          () => {
+            router.push(`/${item.id}`);
+            activeId = item.id;
+          }
+        "
+        :notiCount="getNotiCount(item.id)"
+        :conversationTyping="conversationTyping"
+        :isTyping="isTyping"
       />
     </div>
   </div>

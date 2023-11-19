@@ -8,12 +8,14 @@ export type UserInfo = {
 
 export type Message = {
   id: number;
-  user: {
-    id: number;
-    first_name: string;
-    last_name: string;
-  };
+  user: UserInfo;
   conversation_id: number;
   created_at: string;
   text: string;
+};
+
+export type Conversation = {
+  created_at: string;
+  id: number;
+  members: UserInfo[];
 };

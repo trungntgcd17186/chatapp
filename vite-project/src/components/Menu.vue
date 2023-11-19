@@ -18,7 +18,7 @@ const handleAdd = async () => {
 };
 </script>
 <template>
-  <a-dropdown>
+  <a-dropdown class="cursor-pointer">
     <img
       :src="`https://i.pravatar.cc/150?img=${loggedUserInfo?.id}`"
       class="w-8 h-8 rounded-full"

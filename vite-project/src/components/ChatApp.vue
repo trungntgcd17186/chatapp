@@ -5,38 +5,53 @@ import { useRoute } from "vue-router";
 import { get, post } from "../api";
 import { loggedUserInfo, setLoggedUserInfo } from "../globalState";
 import useGetListConversation from "../hooks/useGetListConversation";
-import { Message } from "../type";
+import { Conversation, Message, UserInfo } from "../type";
 import LeftSide from "./LeftSide.vue";
 import RightSide from "./RightSide.vue";
+import LeftNav from "../components/LevNav/LeftNav.vue";
 
+type NotificationData = Record<
+  number,
+  { count: number; lastMessage: string; userFirstName: string }
+>;
 const route = useRoute();
 
 const listConversation = useGetListConversation();
 
 const messages = ref<Message[]>([]);
+const noti = ref<NotificationData>({});
+const typingData = ref({ isTyping: false, userId: null, conversationId: null });
 
 const socket = io("ws://localhost:9091");
 onMounted(async () => {
   const res = await get("/auth/me", true);
   setLoggedUserInfo(res.data);
 
-  // listConversation?.value?.forEach(x =>  socket.emit("joinRoom", x.id))
-  socket.emit("joinRoom", 6);
-  socket.emit("joinRoom", 7);
-  socket.on(
-    "recMessage",
-    (message: { text: string; conversation_id: number; user: any }) => {
-      if (message.conversation_id == +route.params.id)
-        messages.value.push(message);
-    }
+  listConversation?.value?.forEach((x: Conversation) =>
+    socket.emit("joinRoom", x.id)
   );
+  socket.on("recMessage", (message: Message) => {
+    noti.value[message?.conversation_id] = {
+      count: (noti.value[message?.conversation_id]?.count || 0) + 1,
+      lastMessage: message.text,
+      userFirstName: message?.user?.first_name,
+    };
+    if (message.conversation_id == +route.params.id)
+      messages.value.push(message);
+  });
+
+  socket.on("onTypingMessage", (data: any) => {
+    if (data.userId != loggedUserInfo.value.id) typingData.value = data;
+  });
 });
 
 const members = computed(() => {
   return (
     listConversation?.value
       ?.find((x: any) => x.id == route.params.id)
-      ?.members?.filter((member) => member.id != loggedUserInfo.value.id) || []
+      ?.members?.filter(
+        (member: UserInfo) => member.id != loggedUserInfo.value.id
+      ) || []
   );
 });
 
@@ -55,12 +70,22 @@ watch(
 </script>
 
 <template>
-  <div class="chat-app flex bg-white min-h-[100dvh]">
-    <LeftSide />
+  <div class="chat-app flex bg-white">
+    <LeftNav />
+    <LeftSide
+      :noti="noti"
+      :isTyping="typingData.isTyping"
+      :userTypingId="typingData.userId"
+      :conversationTyping="typingData.conversationId"
+    />
     <RightSide
       :conversationId="+route.params.id"
       :members="members"
       :messages="messages"
+      :isTyping="
+        typingData.isTyping && typingData.conversationId == +route.params.id
+      "
+      :userTypingId="typingData.userId"
     />
   </div>
 </template>

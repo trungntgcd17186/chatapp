@@ -1,12 +1,17 @@
 <script setup lang="ts">
 import { defineProps } from "vue";
+import TypingAnimation from "./TypingAnimation.vue";
 
-const props = defineProps<{
+defineProps<{
   id: string | number;
   avatar: string;
   lastMessage: string | undefined;
   first_name: string;
   last_name: string;
+  isTyping: boolean;
+  conversationTyping: number | null;
+  conversationId: number;
+  nameUserLastMessage: string;
 }>();
 </script>
 
@@ -21,7 +26,17 @@ const props = defineProps<{
       <p class="text-sm font-medium capitalize">
         {{ first_name + " " + last_name }}
       </p>
-      <p class="text-xs text-gray-500">{{ lastMessage || "" }}</p>
+      <TypingAnimation
+        v-if="isTyping && conversationTyping == conversationId"
+      />
+      <div v-else class="flex gap-1">
+        <div class="text-xs text-gray-500 capitalize">
+          {{ nameUserLastMessage + ":" }}
+        </div>
+        <div class="text-xs text-gray-500">
+          {{ lastMessage }}
+        </div>
+      </div>
     </div>
   </div>
 </template>

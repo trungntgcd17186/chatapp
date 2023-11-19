@@ -3,7 +3,7 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
-  ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Message } from './message.entity';
@@ -21,6 +21,6 @@ export class Conversation {
   @JoinTable()
   members: Users[];
 
-  @ManyToOne(() => Message, (message) => message.conversation)
+  @OneToMany(() => Message, (message) => message.conversation)
   messages: Message[];
 }
