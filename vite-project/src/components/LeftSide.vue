@@ -7,7 +7,7 @@ import useGetListConversation from "../hooks/useGetListConversation";
 import router from "../router";
 import { UserInfo } from "../type";
 import ItemChat from "./ItemChat.vue";
-import Menu from "./Menu.vue";
+import IconWrapper from "./IconWrapper.vue";
 
 const { noti } = defineProps<{
   noti: {
@@ -96,28 +96,58 @@ const getNotiCount = (id: number) => {
         />
       </div>
     </div>
-    <div class="chat-history overflow-y-auto mt-[100px] w-[364px] px-2">
-      <ItemChat
-        v-for="item in listConversation"
-        :key="item.id"
-        :conversationId="item.id"
-        :lastMessage="noti?.[item.id]?.lastMessage || item?.messages?.[0]?.text"
-        :nameUserLastMessage="
-          noti?.[item.id]?.userFirstName ||
-          item?.messages?.[0]?.user?.first_name
-        "
-        :members="item?.members?.filter((x: UserInfo) => x.id != loggedUserInfo.id)"
-        :isActive="activeId == item.id"
-        @click="
-          () => {
-            router.push(`/${item.id}`);
-            activeId = item.id;
-          }
-        "
-        :notiCount="getNotiCount(item.id)"
-        :conversationTyping="conversationTyping"
-        :isTyping="isTyping"
-      />
+    <div class="flex flex-col justify-between h-full">
+      <div class="chat-history overflow-y-auto mt-[100px] w-[364px] px-2">
+        <ItemChat
+          v-for="item in listConversation"
+          :key="item.id"
+          :conversationId="item.id"
+          :lastMessage="
+            noti?.[item.id]?.lastMessage || item?.messages?.[0]?.text
+          "
+          :nameUserLastMessage="
+            noti?.[item.id]?.userFirstName ||
+            item?.messages?.[0]?.user?.first_name
+          "
+          :members="item?.members?.filter((x: UserInfo) => x.id != loggedUserInfo.id)"
+          :isActive="activeId == item.id"
+          @click="
+            () => {
+              router.push(`/${item.id}`);
+              activeId = item.id;
+            }
+          "
+          :notiCount="getNotiCount(item.id)"
+          :conversationTyping="conversationTyping"
+          :isTyping="isTyping"
+        />
+      </div>
+
+      <div class="p-2 h-[54px] border-t border-[#0000001a]">
+        <IconWrapper
+          :isHideBg="true"
+          :width="'full'"
+          :height="'full'"
+          :rounded="'rounded-lg'"
+        >
+          <div class="flex gap-2 items-center h-[32px]">
+            <span class="h-4"
+              ><i
+                style="
+                  background-image: url('https://static.xx.fbcdn.net/rsrc.php/v3/yb/r/AI6HXTO9E4-.png');
+                  background-position: 0px -462px;
+                  background-size: auto;
+                  width: 16px;
+                  height: 16px;
+                  background-repeat: no-repeat;
+                  display: inline-block;
+                "
+              ></i
+            ></span>
+            <div>Mở Messenger dành cho máy Mac</div>
+          </div>
+        </IconWrapper>
+      </div>
     </div>
   </div>
 </template>

@@ -92,4 +92,12 @@ const groupName = members?.map((x: UserInfo) => x.first_name).join(", ");
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+::v-deep .ant-scroll-number-only-unit {
+  color: white;
+}
+
+::v-deep .ant-scroll-number-only {
+  vertical-align: bottom;
+}
+</style>
