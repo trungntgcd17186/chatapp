@@ -15,6 +15,7 @@ declare module 'vue' {
     AMenuItem: typeof import('ant-design-vue/es')['MenuItem']
     AModal: typeof import('ant-design-vue/es')['Modal']
     ChatApp: typeof import('./src/components/ChatApp.vue')['default']
+    ConversationInfo: typeof import('./src/components/ConversationInfo.vue')['default']
     GroupChat: typeof import('./src/components/GroupChat.vue')['default']
     IconWrapper: typeof import('./src/components/IconWrapper.vue')['default']
     Item: typeof import('./src/components/LevNav/Item.vue')['default']

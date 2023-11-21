@@ -51,7 +51,7 @@ const handleTyping = (isTyping: boolean = false) => {
   });
 };
 
-const handleTypingMessage = (e) => {
+const handleTypingMessage = () => {
   if (!inputValue.value?.length) handleTyping();
   else if (inputValue.value?.length == 1) handleTyping(true);
 };
@@ -62,9 +62,9 @@ watch(
 );
 </script>
 <template>
-  <div class="rightSide w-2/3 min-h-[100vh] relative">
+  <div class="rightSide w-[calc(100%-989px)] min-h-[100vh] relative">
     <div
-      class="header pl-4 pr-6 fixed flex items-center justify-between h-[56px] bg-white w-[calc(100%-609px)] border-b border-[#0000001a]"
+      class="header pl-4 pr-6 fixed flex items-center justify-between h-[56px] bg-white w-[calc(100%-989px)] border-b border-r border-[#0000001a]"
     >
       <div class="flex items-center gap-2">
         <div class="flex">
@@ -173,7 +173,7 @@ watch(
 
     <div
       ref="scrollRef"
-      class="chat-box px-[112px] mt-[56px] h-[calc(100vh-156px)] overflow-y-auto"
+      class="chat-box px-2 mt-[56px] h-[calc(100vh-120px)] overflow-y-auto"
     >
       <div v-for="(item, index) in messages">
         <div
@@ -200,13 +200,24 @@ watch(
           ]"
         >
           <img
-            v-if="loggedUserInfo?.id != item?.user?.id"
+            v-if="
+              loggedUserInfo?.id != item?.user?.id &&
+              messages?.[index + 1]?.user?.id != item?.user?.id
+            "
             class="w-7 h-7 rounded-full"
             :src="`https://i.pravatar.cc/150?img=${item.user.id}`"
             alt=""
           />
+          <div v-else class="w-7 h-7" />
           <div
-            class="px-3 py-2 bg-[#0a7cff] text-white font-[400] rounded-[12px] max-w-[60%] w-[fit-content] break-words"
+            :class="[
+              'px-3 py-2 bg-[#0a7cff] font-[400] rounded-[12px] max-w-[60%] w-[fit-content] break-words',
+              { 'text-white': loggedUserInfo?.id == item?.user?.id },
+              {
+                'bg-[#f0f0f0] text-[#050505]':
+                  loggedUserInfo?.id != item?.user?.id,
+              },
+            ]"
           >
             {{ item.text }}
           </div>
@@ -217,7 +228,7 @@ watch(
         <img
           v-if="isTyping"
           :src="`https://i.pravatar.cc/150?img=${
-            members?.find((x) => x.id == userTypingId)?.id
+            members?.find((x: UserInfo) => x.id == userTypingId)?.id
           }`"
           class="w-7 h-7 rounded-full"
           alt="Avatar"

@@ -17,8 +17,8 @@ const {
 </script>
 
 <template>
-  <div class="h-full" v-if="$slots.default">
-    <div class="h-full" v-for="component in $slots.default()">
+  <div v-if="$slots.default">
+    <div v-for="component in $slots.default()">
       <div
         :class="[
           `flex items-center justify-center ${rounded} cursor-pointer w-${width} h-${height}`,

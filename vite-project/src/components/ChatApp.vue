@@ -1,14 +1,16 @@
 <script setup lang="ts">
+import { useQuery } from "@tanstack/vue-query";
 import { io } from "socket.io-client";
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import { get, post } from "../api";
+import LeftNav from "../components/LevNav/LeftNav.vue";
 import { loggedUserInfo, setLoggedUserInfo } from "../globalState";
 import useGetListConversation from "../hooks/useGetListConversation";
 import { Conversation, Message, UserInfo } from "../type";
+import ConversationInfo from "./ConversationInfo.vue";
 import LeftSide from "./LeftSide.vue";
 import RightSide from "./RightSide.vue";
-import LeftNav from "../components/LevNav/LeftNav.vue";
 
 type NotificationData = Record<
   number,
@@ -55,18 +57,20 @@ const members = computed(() => {
   );
 });
 
-watch(
-  () => route.params.id,
-  async (newVal) => {
-    const listMessage = await post("/chat/list-message", {
-      conversation_id: newVal,
-    });
-    messages.value = listMessage.data;
+const routeId = computed(() => route.params.id);
+useQuery({
+  queryKey: ["getListMessage", routeId],
+  queryFn: () =>
+    post("/chat/list-message", {
+      conversation_id: +route.params.id,
+    }),
+  select: (response) => {
+    messages.value = response.data;
+    return response.data;
   },
-  {
-    immediate: true,
-  }
-);
+  refetchOnMount: false,
+  staleTime: Infinity,
+});
 </script>
 
 <template>
@@ -87,6 +91,7 @@ watch(
       "
       :userTypingId="typingData.userId"
     />
+    <ConversationInfo />
   </div>
 </template>
 <style scoped></style>

@@ -130,7 +130,7 @@ const getNotiCount = (id: number) => {
           :height="'full'"
           :rounded="'rounded-lg'"
         >
-          <div class="flex gap-2 items-center h-[32px]">
+          <div class="flex gap-2 items-center h-[38px]">
             <span class="h-4"
               ><i
                 style="

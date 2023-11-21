@@ -1,7 +1,10 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { VueQueryDevtools } from "@tanstack/vue-query-devtools";
+</script>
 
 <template>
-  <Suspense>  
+  <Suspense>
     <router-view></router-view>
   </Suspense>
+  <!-- <VueQueryDevtools /> -->
 </template>
