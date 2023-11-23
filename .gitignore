@@ -1,3 +1,4 @@
 /chat-app-backend/dist
 /chat-app-backend/node_modules
 /vite-project/node_modules
+/chat-app-backend/.env
