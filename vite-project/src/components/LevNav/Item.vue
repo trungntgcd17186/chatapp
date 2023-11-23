@@ -34,7 +34,6 @@ const isMouseDown = ref(false);
     ></svg>
 
     <div class="text-[15px] font-medium">{{ title }}</div>
-    <!-- <div>{{ notiCount }}</div> -->
   </div>
 </template>
 <style scoped></style>

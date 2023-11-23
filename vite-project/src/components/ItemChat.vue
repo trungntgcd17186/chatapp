@@ -1,22 +1,36 @@
 <script setup lang="ts">
-import { defineProps, ref } from "vue";
+import { defineProps, ref, watchEffect } from "vue";
 import { UserInfo } from "../type";
 import SingleChat from "./SingleChat.vue";
 import TypingAnimation from "./TypingAnimation.vue";
 
-const { members } = defineProps<{
+const {
+  members,
+  isActive = false,
+  hasUnreadMessage = false,
+  id,
+} = defineProps<{
+  id: number;
   conversationId: number;
   lastMessage: string | undefined;
   isActive: boolean;
   members: UserInfo[];
-  notiCount: number;
+  hasUnreadMessage: boolean;
   isTyping: boolean;
   conversationTyping: number | null;
   nameUserLastMessage: string;
 }>();
 
+const emit = defineEmits<{
+  (e: "update:hasUnreadMessage", id: number): void;
+}>();
+
 const isMouseDown = ref(false);
 const groupName = members?.map((x: UserInfo) => x.first_name).join(", ");
+
+watchEffect(() => {
+  if (isActive && hasUnreadMessage) emit("update:hasUnreadMessage", id);
+});
 </script>
 
 <template>
@@ -84,20 +98,11 @@ const groupName = members?.map((x: UserInfo) => x.first_name).join(", ");
         </div>
       </div>
     </div>
-
-    <a-badge
-      class="absolute right-3 top-[50%] translate-y-[-50%]"
-      :count="notiCount"
+    <span
+      v-if="hasUnreadMessage"
+      class="absolute right-4 top-[50%] translate-y-[-50%] w-[10px] h-[10px] rounded-full bg-[#0099ff]"
     />
   </div>
 </template>
 
-<style scoped>
-::v-deep .ant-scroll-number-only-unit {
-  color: white;
-}
-
-::v-deep .ant-scroll-number-only {
-  vertical-align: bottom;
-}
-</style>
+<style scoped></style>

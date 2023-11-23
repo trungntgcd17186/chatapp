@@ -12,16 +12,13 @@ import ConversationInfo from "./ConversationInfo.vue";
 import LeftSide from "./LeftSide.vue";
 import RightSide from "./RightSide.vue";
 
-type NotificationData = Record<
-  number,
-  { count: number; lastMessage: string; userFirstName: string }
->;
 const route = useRoute();
 
 const listConversation = useGetListConversation();
 
 const messages = ref<Message[]>([]);
-const noti = ref<NotificationData>({});
+const notiLocal = JSON.parse(localStorage.getItem("notiInfo") || "{}");
+const noti = ref<any>(notiLocal);
 const typingData = ref({ isTyping: false, userId: null, conversationId: null });
 
 const socket = io("ws://localhost:9091");
@@ -34,16 +31,47 @@ onMounted(async () => {
   );
   socket.on("recMessage", (message: Message) => {
     noti.value[message?.conversation_id] = {
-      count: (noti.value[message?.conversation_id]?.count || 0) + 1,
+      hasUnreadMessage: message?.user?.id !== loggedUserInfo.value.id && true,
       lastMessage: message.text,
       userFirstName: message?.user?.first_name,
+      userId: message?.user?.id,
     };
+    if (message?.user?.id != loggedUserInfo.value.id) {
+      const notiLocal = JSON.parse(localStorage.getItem("notiInfo") || "{}");
+      localStorage.setItem(
+        "notiInfo",
+        JSON.stringify({
+          ...notiLocal,
+          [message?.conversation_id]: {
+            hasUnreadMessage: true,
+          },
+        })
+      );
+    }
+
     if (message.conversation_id == +route.params.id)
       messages.value.push(message);
   });
 
   socket.on("onTypingMessage", (data: any) => {
     if (data.userId != loggedUserInfo.value.id) typingData.value = data;
+  });
+
+  socket.on("onRemoveUnreadMessage", (data: any) => {
+    if (data.userId === loggedUserInfo.value.id) {
+      noti.value[data.conversationId].hasUnreadMessage = false;
+
+      const notiLocal = JSON.parse(localStorage.getItem("notiInfo") || "{}");
+      localStorage.setItem(
+        "notiInfo",
+        JSON.stringify({
+          ...notiLocal,
+          [data.conversationId]: {
+            hasUnreadMessage: false,
+          },
+        })
+      );
+    }
   });
 });
 

@@ -8,11 +8,12 @@ import router from "../router";
 import { UserInfo } from "../type";
 import ItemChat from "./ItemChat.vue";
 import IconWrapper from "./IconWrapper.vue";
+import { io } from "socket.io-client";
 
 const { noti } = defineProps<{
   noti: {
     [key: string]: {
-      count: number;
+      hasUnreadMessage: boolean;
       lastMessage: string;
       userFirstName: string;
     };
@@ -31,11 +32,23 @@ watchEffect(() => {
   }
 });
 
-const getNotiCount = (id: number) => {
-  if (id == +route?.params?.id) {
-    if (noti?.[id]?.count > 0) noti[id].count = 0;
-    return 0;
-  } else return noti?.[id]?.count;
+const handleRemoveUnreadMessage = () => {
+  const socket = io("ws://localhost:9091");
+
+  const notiInfoLocal = JSON.parse(localStorage.getItem("notiInfo") || "{}");
+  // localStorage.setItem(
+  //   "notiInfo",
+  //   JSON.stringify({
+  //     ...notiInfoLocal,
+  //     [activeId.value]: {
+  //       hasUnreadMessage: false,
+  //     },
+  //   })
+  // );
+  socket.emit("onRemoveUnreadMessage", {
+    conversationId: activeId.value,
+    userId: loggedUserInfo.value.id,
+  });
 };
 </script>
 
@@ -101,6 +114,7 @@ const getNotiCount = (id: number) => {
         <ItemChat
           v-for="item in listConversation"
           :key="item.id"
+          :id="item.id"
           :conversationId="item.id"
           :lastMessage="
             noti?.[item.id]?.lastMessage || item?.messages?.[0]?.text
@@ -117,9 +131,12 @@ const getNotiCount = (id: number) => {
               activeId = item.id;
             }
           "
-          :notiCount="getNotiCount(item.id)"
           :conversationTyping="conversationTyping"
           :isTyping="isTyping"
+          :hasUnreadMessage="noti?.[item.id]?.hasUnreadMessage"
+          @update:hasUnreadMessage="(id: number) => {
+            handleRemoveUnreadMessage()
+          }"
         />
       </div>
 

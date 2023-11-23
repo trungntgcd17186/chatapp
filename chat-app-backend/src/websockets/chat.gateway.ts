@@ -33,6 +33,13 @@ export class AppGateway
     this.server.to(payload.conversationId).emit('onTypingMessage', payload);
   }
 
+  @SubscribeMessage('onRemoveUnreadMessage')
+  async onRemoveNoti(client: Socket, payload: any): Promise<void> {
+    this.server
+      .to(payload.conversationId)
+      .emit('onRemoveUnreadMessage', payload);
+  }
+
   afterInit(server: Server) {
     console.log(server);
     //Do stuffs
@@ -44,10 +51,6 @@ export class AppGateway
 
   handleConnection(client: Socket) {
     client.on('joinRoom', (conversationId: string) => {
-      console.log(
-        '🚀 ~ file: chat.gateway.ts:42 ~ client.on ~ conversationId:',
-        conversationId,
-      );
       client.join(conversationId);
     });
 
