@@ -1,9 +1,16 @@
-import { ref } from "vue";
+import { computed, reactive } from "vue";
 
-const loggedUserInfo = ref<any>({});
+const store = reactive<any>({
+  loggedUserInfo: {},
+  setNewData(newData: any) {
+    this.loggedUserInfo = newData;
+  },
+});
 
 const setLoggedUserInfo = (newData: any) => {
-  loggedUserInfo.value = newData;
+  store.setNewData(newData);
 };
+
+const loggedUserInfo = computed(() => store.loggedUserInfo);
 
 export { loggedUserInfo, setLoggedUserInfo };
