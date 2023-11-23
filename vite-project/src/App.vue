@@ -6,5 +6,5 @@ import { VueQueryDevtools } from "@tanstack/vue-query-devtools";
   <Suspense>
     <router-view></router-view>
   </Suspense>
-  <!-- <VueQueryDevtools /> -->
+  <VueQueryDevtools />
 </template>

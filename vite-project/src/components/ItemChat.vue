@@ -8,7 +8,6 @@ const {
   members,
   isActive = false,
   hasUnreadMessage = false,
-  id,
 } = defineProps<{
   id: number;
   conversationId: number;
@@ -22,14 +21,14 @@ const {
 }>();
 
 const emit = defineEmits<{
-  (e: "update:hasUnreadMessage", id: number): void;
+  (e: "update:hasUnreadMessage"): void;
 }>();
 
 const isMouseDown = ref(false);
 const groupName = members?.map((x: UserInfo) => x.first_name).join(", ");
 
 watchEffect(() => {
-  if (isActive && hasUnreadMessage) emit("update:hasUnreadMessage", id);
+  if (isActive && hasUnreadMessage) emit("update:hasUnreadMessage");
 });
 </script>
 

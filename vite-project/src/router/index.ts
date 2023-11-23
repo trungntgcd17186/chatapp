@@ -11,7 +11,7 @@ const routes = [
     path: "/logout",
     component: {
       render: () => null,
-      beforeRouteEnter(to: any, from: any, next: any) {
+      beforeRouteEnter(_: any, __: any, next: any) {
         cookies.remove("access_token");
         next("/login");
       },

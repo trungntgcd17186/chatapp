@@ -13,7 +13,7 @@ import LeftSide from "./LeftSide.vue";
 import RightSide from "./RightSide.vue";
 
 const route = useRoute();
-
+const routeId = computed(() => +route.params.id);
 const listConversation = useGetListConversation();
 
 const messages = ref<Message[]>([]);
@@ -85,7 +85,6 @@ const members = computed(() => {
   );
 });
 
-const routeId = computed(() => route.params.id);
 useQuery({
   queryKey: ["getListMessage", routeId],
   queryFn: () =>

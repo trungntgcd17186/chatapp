@@ -35,16 +35,6 @@ watchEffect(() => {
 const handleRemoveUnreadMessage = () => {
   const socket = io("ws://localhost:9091");
 
-  const notiInfoLocal = JSON.parse(localStorage.getItem("notiInfo") || "{}");
-  // localStorage.setItem(
-  //   "notiInfo",
-  //   JSON.stringify({
-  //     ...notiInfoLocal,
-  //     [activeId.value]: {
-  //       hasUnreadMessage: false,
-  //     },
-  //   })
-  // );
   socket.emit("onRemoveUnreadMessage", {
     conversationId: activeId.value,
     userId: loggedUserInfo.value.id,
@@ -134,7 +124,7 @@ const handleRemoveUnreadMessage = () => {
           :conversationTyping="conversationTyping"
           :isTyping="isTyping"
           :hasUnreadMessage="noti?.[item.id]?.hasUnreadMessage"
-          @update:hasUnreadMessage="(id: number) => {
+          @update:hasUnreadMessage="() => {
             handleRemoveUnreadMessage()
           }"
         />
