@@ -9,7 +9,7 @@ import IconWrapper from "./IconWrapper.vue";
 const scrollRef: Ref<HTMLElement | null> = ref(null);
 const inputValue = ref("");
 const inputRef: Ref<HTMLElement | null> = ref(null);
-const socket = io("ws://localhost:9091");
+const socket = io("ws://3.106.2.251:9091");
 
 const { conversationId, messages, isTyping } = defineProps<{
   conversationId: number;
