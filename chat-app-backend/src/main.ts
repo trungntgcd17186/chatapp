@@ -1,3 +1,4 @@
+import * as fs from 'fs';
 import { NestFactory } from '@nestjs/core';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import { ServerOptions } from 'socket.io';
@@ -17,7 +18,17 @@ export class SocketAdapter extends IoAdapter {
 }
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { cors: true });
+  const app = await NestFactory.create(AppModule, {
+    cors: true,
+    httpsOptions: {
+      key: fs.readFileSync(
+        '/etc/letsencrypt/live/chatapp-mu-ecru.vercel.app/privkey.pem',
+      ),
+      cert: fs.readFileSync(
+        '/etc/letsencrypt/live/chatapp-mu-ecru.vercel.app/fullchain.pem',
+      ),
+    },
+  });
   app.useWebSocketAdapter(new SocketAdapter(app));
 
   await app.listen(9090);
