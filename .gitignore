@@ -3,3 +3,5 @@
 /vite-project/node_modules
 /chat-app-backend/.env
 /vite-project/dist
+/chat-app-backend/secrets
+/chat-app-backend/secret
