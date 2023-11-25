@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import { ServerOptions } from 'socket.io';
 import { AppModule } from './app.module';
+import * as fs from 'fs';
 
 export class SocketAdapter extends IoAdapter {
   createIOServer(
@@ -16,8 +17,13 @@ export class SocketAdapter extends IoAdapter {
   }
 }
 
+const httpsOptions = {
+  key: fs.readFileSync('./secrets/cert.key'),
+  cert: fs.readFileSync('./secrets/cert.crt'),
+};
+
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { cors: true });
+  const app = await NestFactory.create(AppModule, { cors: true, httpsOptions });
   app.useWebSocketAdapter(new SocketAdapter(app));
 
   await app.listen(9090);
