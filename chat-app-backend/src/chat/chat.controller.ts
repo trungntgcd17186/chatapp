@@ -12,7 +12,7 @@ import { ConversationDto, MessageDto } from 'src/dtos/chat.dto';
 import { EmailsDto } from 'src/dtos/user.dto';
 import { ChatService } from './chat.service';
 
-@Controller('chat')
+@Controller('api/chat')
 export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
