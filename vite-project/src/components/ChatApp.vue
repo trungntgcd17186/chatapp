@@ -16,10 +16,17 @@ const route = useRoute();
 const routeId = computed(() => +route.params.id);
 const listConversation = useGetListConversation();
 
-const messages = ref<{ [id: number]: Message[] }>({});
+const messages = reactive<{ [id: number]: Message[] }>({});
 
 const notiLocal = JSON.parse(localStorage.getItem("notiInfo") || "{}");
-const noti = ref<any>(notiLocal);
+const noti = reactive<{
+  [id: number]: {
+    hasUnreadMessage: boolean;
+    lastMessage: string;
+    userFirstName: string;
+    userId: string | number;
+  };
+}>(notiLocal);
 const typingData = ref({ isTyping: false, userId: null, conversationId: null });
 
 const socket = io("https://nguyenthanhtrung.click/socket");
@@ -31,7 +38,7 @@ onMounted(async () => {
     socket.emit("joinRoom", x.id)
   );
   socket.on("recMessage", (message: Message) => {
-    noti.value[message?.conversation_id] = {
+    noti[message?.conversation_id] = {
       hasUnreadMessage: message?.user?.id !== loggedUserInfo.value.id && true,
       lastMessage: message.text,
       userFirstName: message?.user?.first_name,
@@ -50,7 +57,7 @@ onMounted(async () => {
       );
     }
 
-    messages.value[message.conversation_id]?.push(message);
+    messages[message.conversation_id]?.push(message);
   });
 
   socket.on("onTypingMessage", (data: any) => {
@@ -59,7 +66,7 @@ onMounted(async () => {
 
   socket.on("onRemoveUnreadMessage", (data: any) => {
     if (data.userId === loggedUserInfo.value.id) {
-      noti.value[data.conversationId].hasUnreadMessage = false;
+      noti[data.conversationId].hasUnreadMessage = false;
 
       const notiLocal = JSON.parse(localStorage.getItem("notiInfo") || "{}");
       localStorage.setItem(
@@ -92,7 +99,7 @@ useQuery({
       conversation_id: +route.params.id,
     }),
   select: (response) => {
-    messages.value[+route.params.id] = response.data;
+    messages[+route.params.id] = response.data;
     return response.data;
   },
   refetchOnMount: false,
