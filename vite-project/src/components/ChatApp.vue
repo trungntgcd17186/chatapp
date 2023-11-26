@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useQuery } from "@tanstack/vue-query";
 import { io } from "socket.io-client";
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, reactive, ref } from "vue";
 import { useRoute } from "vue-router";
 import { get, post } from "../api";
 import LeftNav from "../components/LevNav/LeftNav.vue";
@@ -16,7 +16,8 @@ const route = useRoute();
 const routeId = computed(() => +route.params.id);
 const listConversation = useGetListConversation();
 
-const messages = ref<Message[]>([]);
+const messages = ref<{ [id: number]: Message[] }>({});
+
 const notiLocal = JSON.parse(localStorage.getItem("notiInfo") || "{}");
 const noti = ref<any>(notiLocal);
 const typingData = ref({ isTyping: false, userId: null, conversationId: null });
@@ -49,8 +50,7 @@ onMounted(async () => {
       );
     }
 
-    if (message.conversation_id == +route.params.id)
-      messages.value.push(message);
+    messages.value[message.conversation_id]?.push(message);
   });
 
   socket.on("onTypingMessage", (data: any) => {
@@ -92,7 +92,7 @@ useQuery({
       conversation_id: +route.params.id,
     }),
   select: (response) => {
-    messages.value = response.data;
+    messages.value[+route.params.id] = response.data;
     return response.data;
   },
   refetchOnMount: false,
@@ -112,7 +112,7 @@ useQuery({
     <RightSide
       :conversationId="+route.params.id"
       :members="members"
-      :messages="messages"
+      :messages="messages[+route.params.id]"
       :isTyping="
         typingData.isTyping && typingData.conversationId == +route.params.id
       "
