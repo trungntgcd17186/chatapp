@@ -1,13 +1,15 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { ChatModule } from './chat/chat.module';
+import { PrefixInterceptor } from './common/prefix.interceptor';
 import { Conversation } from './entities/conversation.entity';
-import { Users } from './entities/users.entity';
 import { Message } from './entities/message.entity';
+import { Users } from './entities/users.entity';
 
 @Module({
   imports: [
@@ -30,6 +32,12 @@ import { Message } from './entities/message.entity';
     }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: PrefixInterceptor,
+    },
+  ],
 })
 export class AppModule {}
