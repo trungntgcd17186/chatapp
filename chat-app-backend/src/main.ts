@@ -18,6 +18,7 @@ export class SocketAdapter extends IoAdapter {
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
+  app.setGlobalPrefix('api');
   app.useWebSocketAdapter(new SocketAdapter(app));
 
   await app.listen(9090);
