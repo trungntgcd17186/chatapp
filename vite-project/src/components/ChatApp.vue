@@ -21,7 +21,7 @@ const notiLocal = JSON.parse(localStorage.getItem("notiInfo") || "{}");
 const noti = ref<any>(notiLocal);
 const typingData = ref({ isTyping: false, userId: null, conversationId: null });
 
-const socket = io("ws://nguyenthanhtrung.click/socket:9091");
+const socket = io("https://nguyenthanhtrung.click/socket");
 onMounted(async () => {
   const res = await get("/auth/me", true);
   setLoggedUserInfo(res.data);

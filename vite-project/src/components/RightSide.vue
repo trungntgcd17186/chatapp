@@ -9,7 +9,7 @@ import IconWrapper from "./IconWrapper.vue";
 const scrollRef: Ref<HTMLElement | null> = ref(null);
 const inputValue = ref("");
 const inputRef: Ref<HTMLElement | null> = ref(null);
-const socket = io("ws://nguyenthanhtrung.click/socket:9091");
+  const socket = io("https://nguyenthanhtrung.click/socket");
 
 const { conversationId, messages, isTyping } = defineProps<{
   conversationId: number;

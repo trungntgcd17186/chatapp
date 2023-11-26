@@ -33,7 +33,7 @@ watchEffect(() => {
 });
 
 const handleRemoveUnreadMessage = () => {
-  const socket = io("ws://nguyenthanhtrung.click/socket:9091");
+  const socket = io("https://nguyenthanhtrung.click/socket");
 
   socket.emit("onRemoveUnreadMessage", {
     conversationId: activeId.value,
