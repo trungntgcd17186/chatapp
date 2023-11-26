@@ -9,7 +9,7 @@ import {
 import { Server, Socket } from 'socket.io';
 import { ChatService } from 'src/chat/chat.service';
 
-@WebSocketGateway(9091, { cors: true })
+@WebSocketGateway(9091, { cors: true, namespace: '/socket' })
 export class AppGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
