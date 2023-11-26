@@ -21,22 +21,22 @@ const routes = [
   {
     path: "/register",
     component: Register,
-    meta: { requiresNoAuth: true, title: "Register | Chat App" },
+    meta: { requiresNoAuth: true, title: "Register | Messenger" },
   },
   {
     path: "/login",
     component: Login,
-    meta: { requiresNoAuth: true, title: "Login | Chat App" },
+    meta: { requiresNoAuth: true, title: "Login | Messenger" },
   },
   {
     path: "/:id",
     component: ChatApp,
-    meta: { requiresAuth: true, title: "Chat App" },
+    meta: { requiresAuth: true, title: "Messenger" },
   },
   {
     path: "/",
     component: ChatApp,
-    meta: { requiresAuth: true, title: "Chat App" },
+    meta: { requiresAuth: true, title: "Messenger" },
   },
 ];
 
