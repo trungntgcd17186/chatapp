@@ -1,8 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useCookies } from "vue3-cookies";
 import ChatApp from "../components/ChatApp.vue";
-import Login from "../components/Login.vue";
-import Register from "../components/Register.vue";
+import AuthContainer from '../container/AuthContainer.vue'
 
 const { cookies } = useCookies();
 
@@ -20,12 +19,12 @@ const routes = [
   },
   {
     path: "/register",
-    component: Register,
+    component: AuthContainer,
     meta: { requiresNoAuth: true, title: "Register | Messenger" },
   },
   {
     path: "/login",
-    component: Login,
+    component: AuthContainer,
     meta: { requiresNoAuth: true, title: "Login | Messenger" },
   },
   {

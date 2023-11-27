@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useCookies } from "vue3-cookies";
-import { post } from "../api";
-import router from "../router";
+import { post } from "../../api";
+import router from "../../router";
+import Header from "./Header.vue";
 
 const form = ref<HTMLFormElement | null>(null);
 const { cookies } = useCookies();
@@ -21,6 +22,7 @@ const handleLogin = async () => {
 </script>
 
 <template>
+  <Header />
   <div>Login</div>
   <form @submit.prevent="handleLogin" class="flex flex-col" ref="form">
     <label for="username">Username</label>
