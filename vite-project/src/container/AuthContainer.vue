@@ -1,5 +1,13 @@
 <script setup lang="ts">
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import AuthBanner from "../assets/images/AuthBanner.png";
+import Footer from "../components/Auth/Footer.vue";
 import Header from "../components/Auth/Header.vue";
+import Login from "../components/Auth/Login.vue";
+import Register from "../components/Auth/Register.vue";
+
+const route = ref(useRouter());
 </script>
 <template>
   <Header />
@@ -11,11 +19,20 @@ import Header from "../components/Auth/Header.vue";
         Hang out <br />
         anytime, anywhere
       </h1>
-      <div class="mt-5 text-[#595959] font-[400] text-[17px] max-w-[440px]">
+      <div
+        class="mt-5 mb-[40px] text-[#595959] font-[400] text-[17px] max-w-[440px]"
+      >
         Messenger makes it easy and fun to stay close to your favourite people.
       </div>
+
+      <Login v-if="route.currentRoute.path === '/login'" />
+      <Register v-else-if="route.currentRoute.path === '/register'" />
+    </div>
+    <div class="max-w-[600px]">
+      <img :src="AuthBanner" alt="banner" />
     </div>
   </div>
+  <Footer />
 </template>
 <style scoped>
 * {
