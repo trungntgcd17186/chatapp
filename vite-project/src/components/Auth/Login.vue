@@ -3,7 +3,6 @@ import { ref } from "vue";
 import { useCookies } from "vue3-cookies";
 import { post } from "../../api";
 import router from "../../router";
-import Header from "./Header.vue";
 
 const form = ref<HTMLFormElement | null>(null);
 const { cookies } = useCookies();
