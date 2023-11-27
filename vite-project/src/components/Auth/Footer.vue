@@ -3,7 +3,7 @@ import LogoFooter from "../../assets/images/LogoFooter.png";
 </script>
 <template>
   <div
-    class="h-[92px] fixed bottom-0 flex items-center mx-auto max-w-[1995px] px-[176px] justify-between"
+    class="h-[92px] px-[100px] fixed bottom-0 left-[50%] translate-x-[-50%] flex items-center mx-auto w-[100%] max-w-[1659px] justify-between"
   >
     <div>
       <span class="font-[600]"> © Meta&nbsp;2023. </span>
