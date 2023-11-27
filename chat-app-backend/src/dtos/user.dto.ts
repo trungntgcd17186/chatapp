@@ -1,7 +1,7 @@
 import { ArrayMinSize, ArrayUnique, IsArray, IsEmail } from 'class-validator';
 
 export class CreateUserDto {
-  username: string;
+  @IsEmail()
   email: string;
   password: string;
   first_name: string;
@@ -9,7 +9,6 @@ export class CreateUserDto {
 }
 
 export class UserInfoDto {
-  username: string;
   email: string;
   first_name: string;
   last_name: string;
@@ -24,6 +23,6 @@ export class EmailsDto {
 }
 
 export class LoginDto {
-  username: string;
+  email: string;
   password: string;
 }

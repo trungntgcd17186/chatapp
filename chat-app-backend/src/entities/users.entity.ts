@@ -12,9 +12,6 @@ export class Users {
   @Column()
   last_name: string;
 
-  @Column({ unique: true })
-  username: string;
-
   @Column({ select: false })
   password: string;
 

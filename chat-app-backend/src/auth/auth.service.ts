@@ -24,33 +24,28 @@ export class AuthService {
     return this.usersRepository.findOne({ where: { id } });
   }
 
-  async findByUsername(username: string): Promise<Users | undefined> {
+  async findByEmail(email: string): Promise<Users | undefined> {
     return this.usersRepository
       .createQueryBuilder('users')
       .addSelect('users.password')
-      .where('users.username = :username', { username })
+      .where('users.email = :email', { email })
       .getOne();
   }
 
-  async findByEmail(email: string): Promise<Users | undefined> {
-    return this.usersRepository.findOne({ where: { email } });
-  }
-
-  async login(username: string, password: string) {
-    const user = await this.findByUsername(username);
-    if (!user) {
-      throw new NotFoundException(`User with username ${username} not found.`);
-    }
+  async login(email: string, password: string) {
+    const user = await this.findByEmail(email);
+    if (!user)
+      throw new NotFoundException(`User with email ${email} not found.`);
     const passwordMatched = await bcrypt.compare(password, user?.password);
-    if (!passwordMatched) {
+
+    if (!passwordMatched)
       throw new UnauthorizedException('The password is incorrect. Try again.');
-    }
     const token = await this.createToken(user);
     return { access_token: token };
   }
 
   async createToken(user: Users): Promise<string> {
-    const payload = { username: user.username, sub: user.id };
+    const payload = { email: user.email, sub: user.id };
     const secret = this.configService.get<string>('JWT_SECRET');
     return this.jwtService.sign(payload, { secret });
   }
@@ -61,7 +56,6 @@ export class AuthService {
     const user = new Users();
     user.first_name = createUserDto.first_name;
     user.last_name = createUserDto.last_name;
-    user.username = createUserDto.username;
     user.email = createUserDto.email;
     user.password = await bcrypt.hash(createUserDto.password, 10);
 

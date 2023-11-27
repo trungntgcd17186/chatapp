@@ -35,10 +35,10 @@ const handleLogin = async () => {
     <form @submit.prevent="handleLogin" class="flex flex-col" ref="form">
       <input
         class="w-[320px] h-[36px] px-4 py-2 bg-[#0000000a] rounded-[10px] font-[400] text-[16px]"
-        placeholder="Email address or username"
+        placeholder="Email address"
         type="text"
-        id="username"
-        name="username"
+        id="email"
+        name="email"
         required
       />
       <input

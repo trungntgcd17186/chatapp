@@ -34,11 +34,11 @@ const handleSubmitRegister = () => {
       ref="form"
     >
       <input
-        class="w-[320px] h-[36px] px-4 py-2 bg-[#0000000a] rounded-[10px] font-[400] text-[16px]"
-        placeholder="Username"
-        type="text"
-        id="username"
-        name="username"
+        class="mt-3 w-[320px] h-[36px] px-4 py-2 bg-[#0000000a] rounded-[10px] font-[400] text-[16px]"
+        placeholder="Email"
+        type="email"
+        id="email"
+        name="email"
         required
       />
       <input
@@ -53,14 +53,6 @@ const handleSubmitRegister = () => {
         class="mt-3 w-[320px] h-[36px] px-4 py-2 bg-[#0000000a] rounded-[10px] font-[400] text-[16px]"
         placeholder="Confirm password"
         type="password"
-        required
-      />
-      <input
-        class="mt-3 w-[320px] h-[36px] px-4 py-2 bg-[#0000000a] rounded-[10px] font-[400] text-[16px]"
-        placeholder="Email"
-        type="email"
-        id="email"
-        name="email"
         required
       />
       <input
