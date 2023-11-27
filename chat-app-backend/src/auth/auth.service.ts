@@ -43,7 +43,7 @@ export class AuthService {
     }
     const passwordMatched = await bcrypt.compare(password, user?.password);
     if (!passwordMatched) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('The password is incorrect. Try again.');
     }
     const token = await this.createToken(user);
     return { access_token: token };

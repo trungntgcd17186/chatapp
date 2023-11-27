@@ -3,19 +3,29 @@ import { ref } from "vue";
 import { useCookies } from "vue3-cookies";
 import { post } from "../../api";
 import router from "../../router";
+import { useMutation } from "@tanstack/vue-query";
+import { Button } from "ant-design-vue";
 
 const form = ref<HTMLFormElement | null>(null);
 const { cookies } = useCookies();
-
-const handleLogin = async () => {
-  if (form.value) {
-    const values = Object.fromEntries(new FormData(form.value).entries());
-    const res = await post("/auth/login", values);
-
+const errorMessage = ref("");
+const { mutate, isPending } = useMutation({
+  mutationFn: (values: {}) => post("/auth/login", values),
+  onSuccess: (res) => {
     if (res?.data?.access_token) {
       cookies.set("access_token", res.data.access_token, 604800);
       router.push("/");
     }
+  },
+  onError(error: any) {
+    errorMessage.value = error?.response?.data?.message || error.message;
+  },
+});
+
+const handleLogin = async () => {
+  if (form.value) {
+    const values = Object.fromEntries(new FormData(form.value).entries());
+    mutate(values);
   }
 };
 </script>
@@ -40,13 +50,18 @@ const handleLogin = async () => {
         required
       />
 
+      <div class="mt-2 text-[#ff4d4f] text-[14px]" v-if="errorMessage">
+        {{ errorMessage }}
+      </div>
+
       <div class="mt-[32px] flex items-center gap-5">
-        <button
-          class="w-[92px] h-[44px] bg-[#0a7cff] text-[white] rounded-[24px] text-[16px]"
-          type="submit"
+        <Button
+          :loading="isPending"
+          class="btn flex items-center justify-center min-w-[92px] h-[44px] bg-[#0a7cff] rounded-[24px] text-[16px]"
+          htmlType="submit"
         >
-          Log In
-        </button>
+          <span class="text-white">Log In</span>
+        </Button>
         <div class="flex items-center gap-2">
           <div class="text-[13px] font-[300]">No account?</div>
           <div
@@ -59,7 +74,12 @@ const handleLogin = async () => {
       </div>
 
       <div class="mt-[36px] flex items-center gap-3">
-        <input class="ml-2 w-4 h-4" type="checkbox" id="remember" name="remember" />
+        <input
+          class="ml-2 w-4 h-4"
+          type="checkbox"
+          id="remember"
+          name="remember"
+        />
         <label class="text-[#595959] text-[12px] font-[400]" for="remember"
           >Keep me signed in</label
         >
@@ -81,9 +101,9 @@ const handleLogin = async () => {
   </div>
 </template>
 
-<style scoped>
-input {
-  font-family: Calibre, Helvetica Neue, Segoe UI, Helvetica, Arial,
-    Lucida Grande, sans-serif;
+<style>
+.btn .ant-btn-loading-icon .anticon svg {
+  display: flex;
+  fill: white;
 }
 </style>

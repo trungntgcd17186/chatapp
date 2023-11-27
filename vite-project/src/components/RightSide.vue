@@ -173,7 +173,7 @@ watch(
 
     <div
       ref="scrollRef"
-      class="chat-box px-2 mt-[56px] h-[calc(100vh-120px)] overflow-y-auto"
+      class="chat-box px-2 mt-[56px] h-[calc(100vh-120px)] overflow-y-auto border-r border-[#0000001a]"
     >
       <div v-for="(item, index) in messages">
         <div
