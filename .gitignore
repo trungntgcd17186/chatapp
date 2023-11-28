@@ -5,3 +5,6 @@
 /vite-project/dist
 /chat-app-backend/secrets
 /chat-app-backend/secret
+/vite-project/package-lock.json
+/vite-project/yarn.lock
+/vite-project/.env

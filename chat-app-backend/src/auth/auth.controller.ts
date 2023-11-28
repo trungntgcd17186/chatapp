@@ -30,7 +30,7 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  login(@Body() loginDto: LoginDto) {
+  login(@Body(new ValidationPipe()) loginDto: LoginDto) {
     return this.authService.login(loginDto.email, loginDto.password);
   }
 }

@@ -23,6 +23,7 @@ export class EmailsDto {
 }
 
 export class LoginDto {
+  @IsEmail()
   email: string;
   password: string;
 }
