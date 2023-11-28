@@ -60,18 +60,12 @@ watchEffect(() => {
     <div v-else class="flex items-center gap-[10px]">
       <div class="relative w-[48px] h-[48px]">
         <img
-          :src="
-            members[0]?.avatar ||
-            `https://i.pravatar.cc/150?img=${members[0]?.id}`
-          "
+          :src="members[0]?.avatar || `https://i.pravatar.cc/150?img=${members[0]?.id}`"
           class="absolute left-0 bottom-0 w-[32px] h-[32px] rounded-full z-10"
           alt="Avatar"
         />
         <img
-          :src="
-            members[1]?.avatar ||
-            `https://i.pravatar.cc/150?img=${members[1]?.id}`
-          "
+          :src="members[1]?.avatar || `https://i.pravatar.cc/150?img=${members[1]?.id}`"
           class="absolute right-0 top-0 w-[32px] h-[32px] rounded-full z-0"
           alt="Avatar"
         />
@@ -81,15 +75,14 @@ watchEffect(() => {
           {{ groupName }}
         </div>
 
-        <TypingAnimation
-          v-if="isTyping && conversationTyping == conversationId"
-        />
+        <TypingAnimation v-if="isTyping && conversationTyping == conversationId" />
 
         <div v-else class="mt-1 flex gap-1">
-          <div class="text-[13px] text-gray-500 capitalize">
+          <div v-if="nameUserLastMessage" class="text-[13px] text-gray-500 capitalize">
             {{ nameUserLastMessage + ":" }}
           </div>
           <div
+            v-if="lastMessage"
             class="text-[13px] text-gray-500 text-ellipsis overflow-hidden whitespace-nowrap max-w-[140px]"
           >
             {{ lastMessage }}

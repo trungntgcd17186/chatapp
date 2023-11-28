@@ -1,15 +1,4 @@
-import {
-  BadRequestException,
-  Body,
-  Controller,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Post,
-  Request,
-  UseGuards,
-  ValidationPipe,
-} from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, Post, Request, UseGuards, ValidationPipe } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from 'src/auth/auth.service';
 import { CreateUserDto, LoginDto } from '../dtos/user.dto';
@@ -36,9 +25,7 @@ export class AuthController {
       new ValidationPipe({
         exceptionFactory: (errors) => {
           const emailError = errors.find((error) => error.property === 'email');
-          throw new BadRequestException(
-            emailError ? emailError.constraints.isEmail : errors,
-          );
+          throw new BadRequestException(emailError ? emailError.constraints.isEmail : errors);
         },
       }),
     )

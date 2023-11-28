@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useQuery } from "@tanstack/vue-query";
 import { io } from "socket.io-client";
-import { computed, onMounted, reactive, ref } from "vue";
+import { computed, onMounted, reactive, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { get, post } from "../api";
 import LeftNav from "../components/LevNav/LeftNav.vue";
@@ -80,6 +80,14 @@ onMounted(async () => {
       );
     }
   });
+
+});
+
+watch(() => listConversation?.value?.length, () => {
+  console.log("🚀 ~ file: ChatApp.vue:91 ~ watch ~ listConversation:", listConversation)
+  listConversation?.value?.forEach((x: Conversation) =>
+    socket.emit("joinRoom", x.id)
+  );
 });
 
 const members = computed(() => {

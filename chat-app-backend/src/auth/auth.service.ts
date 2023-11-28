@@ -1,9 +1,4 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -26,21 +21,15 @@ export class AuthService {
   }
 
   async findByEmail(email: string): Promise<Users | undefined> {
-    return this.usersRepository
-      .createQueryBuilder('users')
-      .addSelect('users.password')
-      .where('users.email = :email', { email })
-      .getOne();
+    return this.usersRepository.createQueryBuilder('users').addSelect('users.password').where('users.email = :email', { email }).getOne();
   }
 
   async login(email: string, password: string) {
     const user = await this.findByEmail(email);
-    if (!user)
-      throw new NotFoundException(`User with email ${email} not found.`);
+    if (!user) throw new NotFoundException(`User with email ${email} not found.`);
     const passwordMatched = await bcrypt.compare(password, user?.password);
 
-    if (!passwordMatched)
-      throw new UnauthorizedException('The password is incorrect. Try again.');
+    if (!passwordMatched) throw new UnauthorizedException('The password is incorrect. Try again.');
     const token = await this.createToken(user);
     return { access_token: token };
   }
@@ -51,12 +40,9 @@ export class AuthService {
     return this.jwtService.sign(payload, { secret });
   }
 
-  async create(
-    createUserDto: CreateUserDto,
-  ): Promise<{ access_token: string }> {
+  async create(createUserDto: CreateUserDto): Promise<{ access_token: string }> {
     const isExistEmail = await this.findByEmail(createUserDto.email);
-    if (isExistEmail)
-      throw new ConflictException('Email already exists in the system.');
+    if (isExistEmail) throw new ConflictException('Email already exists in the system.');
 
     const user = new Users();
     user.first_name = createUserDto.first_name;

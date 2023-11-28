@@ -6,10 +6,7 @@ import { AuthService } from './auth.service';
 
 @Injectable()
 export class JwtMiddleware extends PassportStrategy(Strategy) {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly configService: ConfigService,
-  ) {
+  constructor(private readonly authService: AuthService, private readonly configService: ConfigService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       secretOrKey: configService.get<string>('JWT_SECRET'),

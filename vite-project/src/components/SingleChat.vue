@@ -30,10 +30,10 @@ defineProps<{
         v-if="isTyping && conversationTyping == conversationId"
       />
       <div v-else class="mt-1 flex gap-1">
-        <div class="text-[13px] text-gray-500 capitalize">
+        <div v-if="nameUserLastMessage" class="text-[13px] text-gray-500 capitalize">
           {{ nameUserLastMessage + ":" }}
         </div>
-        <div class="text-[13px] text-gray-500">
+        <div v-if="lastMessage" class="text-[13px] text-gray-500">
           {{ lastMessage }}
         </div>
       </div>

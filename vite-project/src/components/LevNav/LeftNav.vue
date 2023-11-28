@@ -5,6 +5,7 @@ import { ref } from "vue";
 import { loggedUserInfo } from "../../globalState";
 import Menu from "../Menu.vue";
 import IconWrapper from "../IconWrapper.vue";
+import SingleChat from "../SingleChat.vue";
 
 const idActive = ref(1);
 </script>
@@ -24,8 +25,9 @@ const idActive = ref(1);
       <div class="mt-4 ml-[6px] mb-2 text-[15px] font-[600] leading-4">
         Cộng đồng
       </div>
-      <div class="ml-3 text-[13px] text-secondary">
-        Đã ẩn tất cả các cộng đồng
+
+      <div>
+        <!-- <SingleChat /> -->
       </div>
     </div>
     <div class="flex items-center justify-between px-[6px] py-3">

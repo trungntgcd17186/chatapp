@@ -12,10 +12,7 @@ import { ChatService } from './chat.service';
 import { AppGateway } from 'src/websockets/chat.gateway';
 
 @Module({
-  imports: [
-    AuthModule,
-    TypeOrmModule.forFeature([Conversation, Users, Message]),
-  ],
+  imports: [AuthModule, TypeOrmModule.forFeature([Conversation, Users, Message])],
   controllers: [ChatController],
   providers: [ChatService, AuthService, JwtService, ConfigService, AppGateway],
 })

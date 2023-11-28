@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref } from 'vue';
 
 const isMouseDown = ref(false);
 
 const {
   width = 9,
   height = 9,
-  rounded = "rounded-full",
+  rounded = 'rounded-full',
   isHideBg = false,
 } = defineProps<{
   width?: number | string;

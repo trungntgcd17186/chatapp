@@ -1,12 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Socket } from 'socket.io';
 import { AuthService } from 'src/auth/auth.service';
 import { UserInfoDto } from 'src/dtos/user.dto';
 import { Conversation } from 'src/entities/conversation.entity';
 import { Message } from 'src/entities/message.entity';
 import { Users } from 'src/entities/users.entity';
-import { Repository, getConnection } from 'typeorm';
-import { Socket } from 'socket.io';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ChatService {
@@ -22,10 +22,7 @@ export class ChatService {
     socket.emit('chat', message);
   }
 
-  async createConversation(
-    loggedUser: Users,
-    emails: any,
-  ): Promise<UserInfoDto[]> {
+  async createConversation(loggedUser: Users, emails: any): Promise<UserInfoDto[]> {
     const users = await Promise.all(
       emails.map(async (emailDto) => {
         const userInfo = await this.authService.findByEmail(emailDto);
@@ -35,6 +32,25 @@ export class ChatService {
         return userInfo;
       }),
     );
+
+    if (emails.length === 1) {
+      const friendId = users[0].id;
+      const conversation = await this.conversationRepository
+        .createQueryBuilder('conversation')
+        .leftJoin('conversation.members', 'members')
+        .groupBy('conversation.id')
+        .having('COUNT(members.id) = 2')
+        .where('conversation.id IN ' + '(SELECT conversationId FROM conversation_members_users WHERE usersId = :loggedUserId)', {
+          loggedUserId: loggedUser.id,
+        })
+        .andWhere('conversation.id IN ' + '(SELECT conversationId FROM conversation_members_users WHERE usersId = :friendId)', { friendId })
+        .getOne();
+
+      if (conversation) throw new ConflictException('You already have a conversation with this user.');
+    }
+
+    if (users.some((user) => user.id === loggedUser.id)) throw new NotFoundException('You cannot create a conversation with yourself.');
+
     const conversation = new Conversation();
     conversation.members = [loggedUser, ...users];
 
@@ -50,15 +66,12 @@ export class ChatService {
         .leftJoinAndSelect(
           'conversation.messages',
           'messages',
-          'messages.id = ' +
-            '(SELECT m.id FROM message m WHERE m.conversationId = conversation.id ORDER BY m.created_at DESC LIMIT 1)',
+          'messages.id = ' + '(SELECT m.id FROM message m WHERE m.conversationId = conversation.id ORDER BY m.created_at DESC LIMIT 1)',
         )
         .leftJoinAndSelect('messages.user', 'messageUser')
-        .where(
-          'conversation.id IN ' +
-            '(SELECT conversationId FROM conversation_members_users WHERE usersId = :loggedUserId)',
-          { loggedUserId },
-        )
+        .where('conversation.id IN ' + '(SELECT conversationId FROM conversation_members_users WHERE usersId = :loggedUserId)', {
+          loggedUserId,
+        })
         .getMany();
       return conversations;
     } catch (error) {
@@ -66,13 +79,8 @@ export class ChatService {
     }
   }
 
-  async createMessage(
-    text: string,
-    conversationId: number,
-    userId: number,
-  ): Promise<void> {
-    if (!text || !conversationId || !userId)
-      throw new NotFoundException('An error occurred while creating');
+  async createMessage(text: string, conversationId: number, userId: number): Promise<void> {
+    if (!text || !conversationId || !userId) throw new NotFoundException('An error occurred while creating');
 
     const conversation = await this.conversationRepository.findOne({
       where: { id: conversationId },
@@ -86,10 +94,7 @@ export class ChatService {
     await this.messageRepository.save(message);
   }
 
-  async getListMessage(
-    loggedUserId: number,
-    conversationId: number,
-  ): Promise<any> {
+  async getListMessage(loggedUserId: number, conversationId: number): Promise<any> {
     if (!loggedUserId || !conversationId) return;
 
     const isUserInConversation = await this.conversationRepository
@@ -100,9 +105,7 @@ export class ChatService {
       .getCount();
 
     if (isUserInConversation === 0) {
-      throw new NotFoundException(
-        'You do not have permission to access messages in this chat.',
-      );
+      throw new NotFoundException('You do not have permission to access messages in this chat.');
     }
 
     const messages = await this.messageRepository

@@ -1,31 +1,17 @@
-import {
-  OnGatewayConnection,
-  OnGatewayDisconnect,
-  OnGatewayInit,
-  SubscribeMessage,
-  WebSocketGateway,
-  WebSocketServer,
-} from '@nestjs/websockets';
+import { OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { ChatService } from 'src/chat/chat.service';
 
 @WebSocketGateway(9091, { cors: true, namespace: '/socket' })
-export class AppGateway
-  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
-{
+export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   constructor(private chatService: ChatService) {}
 
   @WebSocketServer() server: Server;
 
   @SubscribeMessage('sendMessage')
   async handleSendMessage(client: Socket, payload: any): Promise<void> {
-    await this.chatService.createMessage(
-      payload?.text,
-      payload?.conversation_id,
-      payload?.user?.id,
-    );
-    payload?.conversation_id &&
-      this.server.to(payload.conversation_id).emit('recMessage', payload);
+    await this.chatService.createMessage(payload?.text, payload?.conversation_id, payload?.user?.id);
+    payload?.conversation_id && this.server.to(payload.conversation_id).emit('recMessage', payload);
   }
 
   @SubscribeMessage('onTypingMessage')
@@ -35,9 +21,7 @@ export class AppGateway
 
   @SubscribeMessage('onRemoveUnreadMessage')
   async onRemoveNoti(client: Socket, payload: any): Promise<void> {
-    this.server
-      .to(payload.conversationId)
-      .emit('onRemoveUnreadMessage', payload);
+    this.server.to(payload.conversationId).emit('onRemoveUnreadMessage', payload);
   }
 
   afterInit(server: Server) {
