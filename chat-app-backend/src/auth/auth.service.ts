@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -53,6 +54,10 @@ export class AuthService {
   async create(
     createUserDto: CreateUserDto,
   ): Promise<{ access_token: string }> {
+    const isExistEmail = await this.findByEmail(createUserDto.email);
+    if (isExistEmail)
+      throw new ConflictException('Email already exists in the system.');
+
     const user = new Users();
     user.first_name = createUserDto.first_name;
     user.last_name = createUserDto.last_name;

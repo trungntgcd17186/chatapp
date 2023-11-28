@@ -23,7 +23,7 @@ export class EmailsDto {
 }
 
 export class LoginDto {
-  @IsEmail()
+  @IsEmail({}, { message: 'Email is not valid' })
   email: string;
   password: string;
 }

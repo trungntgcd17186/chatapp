@@ -8,6 +8,7 @@ import router from "../../router";
 
 const { cookies } = useCookies();
 const form = ref<HTMLFormElement | null>(null);
+const errorMessage = ref("");
 
 const { mutate, isPending } = useMutation({
   mutationFn: (values: {}) => post("/auth/create-user", values),
@@ -17,11 +18,16 @@ const { mutate, isPending } = useMutation({
       router.push("/");
     }
   },
+  onError(error: any) {
+    errorMessage.value = error?.response?.data?.message || error.message;
+  },
 });
 const handleSubmitRegister = () => {
   if (form.value) {
     const values = Object.fromEntries(new FormData(form.value).entries());
-    mutate(values);
+    if (values.confirmPassword !== values.password) {
+      errorMessage.value = "Confirm password does not match.";
+    } else mutate(values);
   }
 };
 </script>
@@ -52,6 +58,8 @@ const handleSubmitRegister = () => {
       <input
         class="mt-3 w-[320px] h-[36px] px-4 py-2 bg-[#0000000a] rounded-[10px] font-[400] text-[16px]"
         placeholder="Confirm password"
+        id="confirmPassword"
+        name="confirmPassword"
         type="password"
         required
       />
@@ -71,6 +79,10 @@ const handleSubmitRegister = () => {
         name="last_name"
         required
       />
+
+      <div class="mt-2 text-[#ff4d4f] text-[14px]">
+        {{ errorMessage }}
+      </div>
 
       <div class="mt-[32px] flex items-center gap-5">
         <Button

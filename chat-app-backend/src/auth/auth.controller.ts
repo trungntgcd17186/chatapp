@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -30,7 +31,19 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  login(@Body(new ValidationPipe()) loginDto: LoginDto) {
+  login(
+    @Body(
+      new ValidationPipe({
+        exceptionFactory: (errors) => {
+          const emailError = errors.find((error) => error.property === 'email');
+          throw new BadRequestException(
+            emailError ? emailError.constraints.isEmail : errors,
+          );
+        },
+      }),
+    )
+    loginDto: LoginDto,
+  ) {
     return this.authService.login(loginDto.email, loginDto.password);
   }
 }

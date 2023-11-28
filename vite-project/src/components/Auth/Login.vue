@@ -9,6 +9,7 @@ import { Button } from "ant-design-vue";
 const form = ref<HTMLFormElement | null>(null);
 const { cookies } = useCookies();
 const errorMessage = ref("");
+
 const { mutate, isPending } = useMutation({
   mutationFn: (values: {}) => post("/auth/login", values),
   onSuccess: (res) => {
@@ -50,7 +51,7 @@ const handleLogin = async () => {
         required
       />
 
-      <div class="mt-2 text-[#ff4d4f] text-[14px]" v-if="errorMessage">
+      <div class="mt-2 text-[#ff4d4f] text-[14px]">
         {{ errorMessage }}
       </div>
 
