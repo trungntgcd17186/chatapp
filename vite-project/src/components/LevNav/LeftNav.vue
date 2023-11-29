@@ -5,7 +5,7 @@ import { ref } from "vue";
 import { loggedUserInfo } from "../../globalState";
 import Menu from "../Menu.vue";
 import IconWrapper from "../IconWrapper.vue";
-import SingleChat from "../SingleChat.vue";
+// import SingleChat from "../SingleChat.vue";
 
 const idActive = ref(1);
 </script>
