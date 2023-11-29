@@ -24,6 +24,12 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     this.server.to(payload.conversationId).emit('onRemoveUnreadMessage', payload);
   }
 
+  @SubscribeMessage('onCreateConversation')
+  async onCreateConversation(client: Socket, payload: any): Promise<void> {
+    const conversation = await this.chatService.createConversation(payload.loggedUser, payload.emails);
+    this.server.emit('onHasNewConversation', conversation);
+  }
+
   afterInit(server: Server) {
     console.log(server);
     //Do stuffs

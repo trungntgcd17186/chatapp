@@ -1,11 +1,13 @@
-import { useQuery } from "@tanstack/vue-query";
-import { get } from "../api";
+import { useQuery } from '@tanstack/vue-query';
+import { get } from '../api';
+import { ref } from 'vue';
 
 export default () => {
-  const { data } = useQuery({
-    queryKey: ["listConversation"],
-    queryFn: () => get("/chat/list-conversation", true),
-    select: (response) => response.data,
+  const listConversation = ref();
+  useQuery({
+    queryKey: ['listConversation'],
+    queryFn: () => get('/chat/list-conversation', true),
+    select: (response) => (listConversation.value = response.data),
   });
-  return data;
+  return listConversation;
 };

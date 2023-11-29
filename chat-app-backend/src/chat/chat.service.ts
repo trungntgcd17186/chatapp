@@ -1,8 +1,6 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Socket } from 'socket.io';
 import { AuthService } from 'src/auth/auth.service';
-import { UserInfoDto } from 'src/dtos/user.dto';
 import { Conversation } from 'src/entities/conversation.entity';
 import { Message } from 'src/entities/message.entity';
 import { Users } from 'src/entities/users.entity';
@@ -18,11 +16,8 @@ export class ChatService {
     private authService: AuthService,
   ) {}
 
-  sendMessageToWebSocket(message: string, socket: Socket) {
-    socket.emit('chat', message);
-  }
-
-  async createConversation(loggedUser: Users, emails: any): Promise<UserInfoDto[]> {
+  async createConversation(loggedUser: Users, emails: any): Promise<{ id: number; created_at: Date; members: Users[] }> {
+    if (!emails.length) throw new NotFoundException('Empty email.');
     const users = await Promise.all(
       emails.map(async (emailDto) => {
         const userInfo = await this.authService.findByEmail(emailDto);
@@ -55,7 +50,7 @@ export class ChatService {
     conversation.members = [loggedUser, ...users];
 
     await this.conversationRepository.save(conversation);
-    return [loggedUser, ...users];
+    return conversation;
   }
 
   async getListConversation(loggedUserId: number): Promise<any> {

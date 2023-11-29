@@ -20,12 +20,20 @@ export class AuthService {
     return this.usersRepository.findOne({ where: { id } });
   }
 
-  async findByEmail(email: string): Promise<Users | undefined> {
+  async findByEmailAndReturnPassword(email: string): Promise<Users | undefined> {
     return this.usersRepository.createQueryBuilder('users').addSelect('users.password').where('users.email = :email', { email }).getOne();
   }
 
+  async findByEmail(email: string): Promise<Users | undefined> {
+    return this.usersRepository.createQueryBuilder('users').where('users.email = :email', { email }).getOne();
+  }
+
+  async getListUser(loggedUserId: number): Promise<Users[]> {
+    return this.usersRepository.createQueryBuilder('users').where('users.id != :id', { id: loggedUserId }).getMany();
+  }
+
   async login(email: string, password: string) {
-    const user = await this.findByEmail(email);
+    const user = await this.findByEmailAndReturnPassword(email);
     if (!user) throw new NotFoundException(`User with email ${email} not found.`);
     const passwordMatched = await bcrypt.compare(password, user?.password);
 

@@ -13,6 +13,12 @@ export class AuthController {
     return this.authService.findById(req.user.id);
   }
 
+  @UseGuards(AuthGuard('jwt'))
+  @Get('listUser')
+  async getListUser(@Request() req) {
+    return await this.authService.getListUser(req.user.id);
+  }
+
   @Post('create-user')
   create(@Body(new ValidationPipe()) createUserDto: CreateUserDto) {
     return this.authService.create(createUserDto);
