@@ -17,8 +17,10 @@ const handleChange = (value: string[]) => {
 };
 const listUser = await get('/auth/listUser', true).then((res) => res.data);
 
-const handleAdd = async () => {
-  socket.emit('onCreateConversation', { loggedUser: loggedUserInfo?.value, emails: emails?.value });
+const handleAdd = () => {
+  if(emails?.value && loggedUserInfo?.value) {
+    socket.emit('onCreateConversation', { loggedUser: loggedUserInfo.value, emails: emails.value });
+  }
   onClose();
 };
 </script>
