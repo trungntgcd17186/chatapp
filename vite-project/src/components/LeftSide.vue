@@ -92,7 +92,7 @@ const handleRemoveUnreadMessage = () => {
       </div>
     </div>
     <div class="flex flex-col justify-between h-full">
-      <div class="chat-history overflow-y-auto mt-[100px] w-[364px] px-2">
+      <div class="chat-history overflow-y-auto max-h-[calc(100vh-154px)] mt-[100px] w-[359px] px-2">
         <ItemChat
           v-for="item in listConversation"
           :key="item.id"
