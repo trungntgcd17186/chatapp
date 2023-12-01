@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import io from 'socket.io-client';
-import { Ref, ref, watch } from 'vue';
+import { Ref, onMounted, ref, watch } from 'vue';
 import { socketUrl } from '../api/socket';
 import TypingAnimation from '../components/TypingAnimation.vue';
 import { loggedUserInfo } from '../globalState';
@@ -25,6 +25,7 @@ const sendMessage = (text: string) => {
     text,
     conversation_id: conversationId,
     user: loggedUserInfo.value,
+    created_at: new Date(),
   });
 };
 
@@ -61,6 +62,24 @@ watch(
   () => [conversationId, messages?.length, isTyping],
   () => handleGoToBottom()
 );
+
+watch(
+  () => conversationId,
+  () => {
+    inputRef?.value?.focus();
+  }
+);
+
+const getTime = (timeRaw: Date) => {
+  const time = new Date(timeRaw);
+  return `${time.getHours()}:${time.getMinutes()}`;
+};
+
+const checkTimeDiffOver15Minutes = (message1Date: Date, message2Date: Date) => {
+  const timeDiffInMilliseconds = Math.abs(new Date(message2Date).getTime() - new Date(message1Date).getTime());
+  const timeDiffInMinutes = timeDiffInMilliseconds / (1000 * 60);
+  return timeDiffInMinutes > 15;
+};
 </script>
 <template>
   <div class="rightSide w-[calc(100%-989px)] min-h-[100vh] relative">
@@ -153,13 +172,20 @@ watch(
 
     <div ref="scrollRef" class="chat-box px-2 mt-[56px] h-[calc(100vh-120px)] overflow-y-auto border-r border-[#0000001a]">
       <div v-for="(item, index) in messages">
-        <div :class="['w-full flex my-1', { 'justify-end': loggedUserInfo?.id == item?.user?.id }]">
+        <div :class="['w-full flex my-[1px]', { 'justify-end': loggedUserInfo?.id == item?.user?.id }]">
           <div
             v-if="members?.length > 1 && loggedUserInfo?.id != item?.user?.id && messages?.[index - 1]?.user?.id != item?.user?.id"
             class="ml-10 text-xs capitalize"
           >
             {{ item?.user?.first_name }}
           </div>
+        </div>
+
+        <div
+          v-if="checkTimeDiffOver15Minutes(item.created_at, messages?.[index - 1]?.created_at)"
+          class="flex justify-center text-[12px] text-[#65676b] font-[500] leading-[15px]"
+        >
+          {{ getTime(item?.created_at) }}
         </div>
         <div :class="['w-full flex gap-2 items-center', { 'justify-end': loggedUserInfo?.id == item?.user?.id }]">
           <img
@@ -169,17 +195,20 @@ watch(
             alt=""
           />
           <div v-else class="w-7 h-7" />
-          <div
-            :class="[
-              'px-3 py-2 bg-[#0a7cff] font-[400] rounded-[12px] max-w-[60%] w-[fit-content] break-words',
-              { 'text-white': loggedUserInfo?.id == item?.user?.id },
-              {
-                'bg-[#f0f0f0] text-[#050505]': loggedUserInfo?.id != item?.user?.id,
-              },
-            ]"
-          >
-            {{ item.text }}
-          </div>
+          <a-tooltip overlayClassName="tooltipMessage" placement="left" color="#1c1e21e6">
+            <template #title>{{ getTime(item?.created_at) }}</template>
+            <div
+              :class="[
+                'px-3 py-2 bg-[#0a7cff] font-[400] rounded-[18px] max-w-[60%] w-[fit-content] break-words leading-[21px]',
+                { 'text-white': loggedUserInfo?.id == item?.user?.id },
+                {
+                  'bg-[#f0f0f0] text-[#050505]': loggedUserInfo?.id != item?.user?.id,
+                },
+              ]"
+            >
+              {{ item.text }}
+            </div>
+          </a-tooltip>
         </div>
       </div>
 
@@ -280,4 +309,17 @@ watch(
   </div>
 </template>
 
-<style scoped></style>
+<style>
+.tooltipMessage {
+  padding: 0;
+}
+.tooltipMessage .ant-tooltip-content .ant-tooltip-arrow {
+  display: none;
+}
+
+.tooltipMessage .ant-tooltip-inner {
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 300;
+}
+</style>

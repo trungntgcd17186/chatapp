@@ -50,7 +50,7 @@ const handleRemoveUnreadMessage = () => {
   <div class="leftSide w-[360px] border-x border-[#0000001a]">
     <div class="header fixed w-[360px] flex flex-col items-center gap-2 px-4 pt-3 h-[94px] border-gray-300">
       <div class="w-full h-36px flex justify-between items-center">
-        <h1 class="ml-3 text-[24px] font-[600]">Chat</h1>
+        <h1 class="ml-3 text-[24px] font-[600]">Đoạn chat</h1>
 
         <div class="flex items-center justify-center w-9 h-9 rounded-full bg-[#0000000a] hover:bg-[#0000001a] cursor-pointer" @click="open = true">
           <svg
