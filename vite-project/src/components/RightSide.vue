@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import io from 'socket.io-client';
-import { Ref, onMounted, ref, watch } from 'vue';
+import { Ref, ref, watch } from 'vue';
 import { socketUrl } from '../api/socket';
 import TypingAnimation from '../components/TypingAnimation.vue';
 import { loggedUserInfo } from '../globalState';
