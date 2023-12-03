@@ -12,6 +12,7 @@ export type Message = {
   conversation_id: number;
   created_at: string;
   text: string;
+  isRemoved: boolean;
 };
 
 export type Conversation = {

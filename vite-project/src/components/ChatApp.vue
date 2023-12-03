@@ -22,6 +22,7 @@ const messages = reactive<{ [id: number]: Message[] }>({});
 const notiLocal = JSON.parse(localStorage.getItem('notiInfo') || '{}');
 const noti = reactive<{
   [id: number]: {
+    id: number;
     hasUnreadMessage: boolean;
     lastMessage: string;
     userFirstName: string;
@@ -42,6 +43,7 @@ onMounted(async () => {
       lastMessage: message.text,
       userFirstName: message?.user?.first_name,
       userId: message?.user?.id,
+      id: message?.id,
     };
     if (message?.user?.id != loggedUserInfo.value.id) {
       const notiLocal = JSON.parse(localStorage.getItem('notiInfo') || '{}');
@@ -86,6 +88,11 @@ onMounted(async () => {
       socket.emit('joinRoom', data.id);
       listConversation.value.push(data);
     }
+  });
+
+  socket.on('onRemoveMessage', ({ conversationId, messageId }) => {
+    const messageToUpdate = messages[conversationId]?.find((x) => x.id === messageId);
+    if (messageToUpdate) messageToUpdate.isRemoved = true;
   });
 });
 

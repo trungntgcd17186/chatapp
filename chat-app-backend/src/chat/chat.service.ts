@@ -74,7 +74,7 @@ export class ChatService {
     }
   }
 
-  async createMessage(text: string, conversationId: number, userId: number): Promise<void> {
+  async createMessage(text: string, conversationId: number, userId: number): Promise<number> {
     if (!text || !conversationId || !userId) throw new NotFoundException('An error occurred while creating');
 
     const conversation = await this.conversationRepository.findOne({
@@ -87,6 +87,7 @@ export class ChatService {
     message.conversation = conversation;
     message.user = user;
     await this.messageRepository.save(message);
+    return message.id
   }
 
   async getListMessage(loggedUserId: number, conversationId: number): Promise<any> {
@@ -112,5 +113,19 @@ export class ChatService {
       .getMany();
 
     return messages.reverse();
+  }
+
+  async removeMessage(loggedUserId: number, messageId: number): Promise<void> {
+    const message = await this.messageRepository
+      .createQueryBuilder('message')
+      .leftJoin('message.user', 'user')
+      .where('user.id = :userId', { userId: loggedUserId })
+      .where('message.id = :messageId', { messageId })
+      .getOne();
+    if (message) {
+      message.isRemoved = true;
+      message.text = '';
+    }
+    await this.messageRepository.save(message);
   }
 }

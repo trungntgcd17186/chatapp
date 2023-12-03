@@ -13,6 +13,10 @@ export class Message {
   @Column()
   text: string;
 
+  // eslint-disable-next-line @typescript-eslint/no-inferrable-types
+  @Column()
+  isRemoved: boolean = false;
+
   @ManyToOne(() => Conversation, (conversation) => conversation.messages)
   conversation: Conversation;
 

@@ -10,8 +10,8 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
 
   @SubscribeMessage('sendMessage')
   async handleSendMessage(client: Socket, payload: any): Promise<void> {
-    await this.chatService.createMessage(payload?.text, payload?.conversation_id, payload?.user?.id);
-    payload?.conversation_id && this.server.to(payload.conversation_id).emit('recMessage', payload);
+    const messageId = await this.chatService.createMessage(payload?.text, payload?.conversation_id, payload?.user?.id);
+    payload?.conversation_id && this.server.to(payload.conversation_id).emit('recMessage', { ...payload, id: messageId });
   }
 
   @SubscribeMessage('onTypingMessage')
@@ -28,6 +28,12 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   async onCreateConversation(client: Socket, payload: any): Promise<void> {
     const conversation = await this.chatService.createConversation(payload.loggedUser, payload.emails);
     this.server.emit('onHasNewConversation', conversation);
+  }
+
+  @SubscribeMessage('removeMessage')
+  async removeMessage(client: Socket, payload: { conversationId: string | string[]; loggedUserId: number; messageId: number }): Promise<void> {
+    await this.chatService.removeMessage(payload.loggedUserId, payload.messageId);
+    this.server.to(payload.conversationId).emit('onRemoveMessage', { conversationId: payload.conversationId, messageId: payload.messageId });
   }
 
   afterInit(server: Server) {

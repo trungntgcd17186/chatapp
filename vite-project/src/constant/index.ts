@@ -7,27 +7,55 @@ const Storage = `<path d="M8 7.5a1 1 0 00-1 1V10a1 1 0 001 1h20a1 1 0 001-1V8.5a
 export const ListItem = [
   {
     id: 1,
-    title: "Chat",
+    title: 'Chat',
     icon: Chat,
   },
   {
     id: 2,
-    title: "Mọi người",
+    title: 'Mọi người',
     icon: People,
   },
   {
     id: 3,
-    title: "Marketplace",
+    title: 'Marketplace',
     icon: MarketPlace,
   },
   {
     id: 4,
-    title: "Tin nhắn đang chờ",
+    title: 'Tin nhắn đang chờ',
     icon: PendingMessage,
   },
   {
     id: 5,
-    title: "Kho lưu trữ",
+    title: 'Kho lưu trữ',
     icon: Storage,
+  },
+];
+
+export const optionsEdit = [
+  {
+    id: 1,
+    text: 'Xoá, gỡ',
+  },
+  {
+    id: 2,
+    text: 'Chỉnh sửa',
+  },
+  {
+    id: 3,
+    text: 'Ghim',
+  },
+];
+
+export const RadioContent = [
+  {
+    id: 1,
+    label: 'Thu hồi với mọi người',
+    des: 'Tin nhắn này sẽ bị thu hồi với mọi người trong đoạn chat. Những người khác có thể đã xem hoặc chuyển tiếp tin nhắn đó. Tin nhắn đã thu hồi vẫn có thể bị báo cáo.',
+  },
+  {
+    id: 2,
+    label: 'Gỡ ở phía bạn',
+    des: 'Chúng tôi sẽ gỡ tin nhắn này ở phía bạn. Những người khác trong đoạn chat vẫn có thể xem được.',
   },
 ];
