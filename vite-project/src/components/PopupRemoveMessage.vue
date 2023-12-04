@@ -1,20 +1,32 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import IconWrapper from './IconWrapper.vue';
 import { RadioContent } from '../constant/index';
 
 const checked = ref(1);
 
-const { open = false, onOk = () => {} } = defineProps<{
-  open: boolean;
+const { open, onOk = () => {} } = defineProps<{
   onOk: Function;
+  open: boolean;
 }>();
 
+const emit = defineEmits<{
+  (e: 'update:open', value: boolean): void;
+}>();
+
+const openValue = computed({
+  get() {
+    return open;
+  },
+  set(value) {
+    emit('update:open', value);
+  },
+});
 </script>
 <template>
   <div>
-    <a-modal width="700px" wrapClassName="popupRemoveMessage" :open="open" :closable="false" :footer="null">
-      <IconWrapper class="absolute right-4 top-4" @click="open = false">
+    <a-modal width="700px" wrapClassName="popupRemoveMessage" v-model:open="openValue" :closable="false" :footer="null">
+      <IconWrapper class="absolute right-4 top-4" @click="openValue = false">
         <svg
           viewBox="0 0 36 36"
           fill="currentColor"
@@ -36,7 +48,7 @@ const { open = false, onOk = () => {} } = defineProps<{
         </p>
       </div>
       <div class="mt-[44px] flex gap-2">
-        <a-button class="btnCancel w-full hover:bg-[#0000000a] bg-[#0000000a] rounded-[6px]" @click="open = false">Hủy</a-button>
+        <a-button class="btnCancel w-full hover:bg-[#0000000a] bg-[#0000000a] rounded-[6px]" @click="openValue = false">Hủy</a-button>
         <a-button class="btnRemove w-full bg-[#0a7cff] rounded-[6px]" type="primary" @click="onOk">Xóa, gỡ</a-button>
       </div>
     </a-modal>

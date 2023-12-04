@@ -72,8 +72,8 @@ watch(
 );
 </script>
 <template>
-  <div class="rightSide w-[calc(100%-989px)] min-h-[100vh] relative">
-    <div class="header pl-4 pr-6 fixed flex items-center justify-between h-[56px] bg-white w-[calc(100%-989px)] border-b border-r border-[#0000001a]">
+  <div class="rightSide w-[calc(100%-989px)] min-h-[100vh] relative border-b border-r border-[#0000001a]">
+    <div class="header shadow pl-4 pr-6 fixed flex items-center justify-between h-[56px] bg-white w-[calc(100%-990px)]">
       <div class="flex items-center gap-2">
         <div class="flex">
           <div v-if="members.length === 1" class="flex items-center gap-2">
@@ -160,7 +160,7 @@ watch(
       </div>
     </div>
 
-    <div ref="scrollRef" class="chat-box px-2 mt-[56px] h-[calc(100vh-120px)] overflow-y-auto border-r border-[#0000001a]">
+    <div ref="scrollRef" class="chat-box px-2 mt-[60px] h-[calc(100vh-120px)] overflow-y-auto">
       <Messages :conversationId="conversationId" :messages="messages" :isGroupChat="members.length > 1" />
 
       <div class="flex gap-2 mt-2 items-center">

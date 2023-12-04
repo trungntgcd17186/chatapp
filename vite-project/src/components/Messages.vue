@@ -5,6 +5,7 @@ import { io } from 'socket.io-client';
 import { socketUrl } from '../api/socket';
 import PopupRemoveMessage from './PopupRemoveMessage.vue';
 import { ref } from 'vue';
+import IconWrapper from './IconWrapper.vue';
 
 const { conversationId } = defineProps<{
   conversationId: number;
@@ -30,7 +31,9 @@ const messageId = ref(0);
 
 const getTime = (timeRaw: Date) => {
   const time = new Date(timeRaw);
-  return `${time.getHours()}:${time.getMinutes()}`;
+  const hours = time.getHours();
+  const minutes = time.getMinutes().toString().padStart(2, '0');
+  return `${hours}:${minutes}`;
 };
 
 const checkTimeDiffOver15Minutes = (message1Date: Date, message2Date: Date) => {
@@ -74,7 +77,7 @@ const getTextRemoved = (isUserLogged: boolean, nameUser: string) => {
 </script>
 
 <template>
-  <PopupRemoveMessage :open="open" :onOk="handleRemoveMessage" />
+  <PopupRemoveMessage :open="open" @update:open="(newValue: boolean) => (open = newValue)" :onOk="handleRemoveMessage" />
   <div v-for="(item, index) in messages" :key="item.id">
     <div :class="['w-full flex my-[1px]', { 'justify-end': loggedUserInfo?.id == item?.user?.id }]">
       <div
@@ -100,23 +103,37 @@ const getTextRemoved = (isUserLogged: boolean, nameUser: string) => {
       />
       <div v-else class="w-7 h-7" />
 
-      <div class="relative max-w-[60%] w-[fit-content]">
-        <div
-          :class="[
-            'flex items-center justify-center',
-            {
-              iconLeft: loggedUserInfo?.id == item?.user?.id,
-              iconRight: loggedUserInfo?.id != item?.user?.id,
-            },
-          ]"
-        >
-          <svg class="cursor-pointer" height="22px" viewBox="1 1 21 21" width="22px">
-            <g class="x148u3ch" fill-rule="evenodd" stroke-width="1">
-              <path
-                d="M10.8932368,14.7625445 C10.8932368,15.535432 10.0849567,15.996442 9.48116675,15.5677995 L4.03193175,11.696707 C3.49257425,11.313742 3.49287675,10.4694645 4.03193175,10.0864995 L9.48116675,6.2157095 C10.0849567,5.7867645 10.8932368,6.248077 10.8932368,7.020662 L10.8938418,9.0755445 C15.2129368,9.0755445 18.1517243,11.027577 18.1523293,15.7226795 C18.1523293,16.0820495 17.9036743,16.3349395 17.5273643,16.3349395 C17.2487618,16.3349395 17.0164418,16.1746145 16.8527893,15.680027 C16.1588543,13.584307 14.1063918,12.7049395 10.8938418,12.7049395 L10.8932368,14.7625445 Z"
-              ></path>
-            </g>
-          </svg>
+      <div
+        :class="[
+          'flex gap-2 relative max-w-[60%] w-[fit-content]',
+          {
+            iconLeft: loggedUserInfo?.id == item?.user?.id,
+            iconRight: loggedUserInfo?.id != item?.user?.id,
+          },
+        ]"
+      >
+        <div class="actionMessage flex items-center justify-center">
+          <!-- Icon reaction-->
+          <IconWrapper v-if="!item.isRemoved" :width="`[22px]`" :height="`[22]`" :isHideBg="true">
+            <svg height="22px" viewBox="0 0 22 22" width="22px">
+              <circle cx="11" cy="11" r="7" stroke="#65676bb3" stroke-width="1.5px" fill="none"></circle>
+              <path d="M8,13Q11,16,14,13" stroke="#65676bb3" stroke-width="1.5px" fill="none"></path>
+              <circle cx="9" cy="10" r="1.2" fill="#65676bb3"></circle>
+              <circle cx="13" cy="10" r="1.2" fill="#65676bb3"></circle>
+            </svg>
+          </IconWrapper>
+          <!-- Icon Reply -->
+          <IconWrapper v-if="!item.isRemoved" :width="`[22px]`" :height="`[22]`" :isHideBg="true">
+            <svg class="fill-[#65676b80] hover:fill-[#65676b]" height="22px" viewBox="1 1 21 21" width="22px">
+              <g class="x148u3ch" fill-rule="evenodd" stroke-width="1">
+                <path
+                  d="M10.8932368,14.7625445 C10.8932368,15.535432 10.0849567,15.996442 9.48116675,15.5677995 L4.03193175,11.696707 C3.49257425,11.313742 3.49287675,10.4694645 4.03193175,10.0864995 L9.48116675,6.2157095 C10.0849567,5.7867645 10.8932368,6.248077 10.8932368,7.020662 L10.8938418,9.0755445 C15.2129368,9.0755445 18.1517243,11.027577 18.1523293,15.7226795 C18.1523293,16.0820495 17.9036743,16.3349395 17.5273643,16.3349395 C17.2487618,16.3349395 17.0164418,16.1746145 16.8527893,15.680027 C16.1588543,13.584307 14.1063918,12.7049395 10.8938418,12.7049395 L10.8932368,14.7625445 Z"
+                ></path>
+              </g>
+            </svg>
+          </IconWrapper>
+
+          <!-- Icon Edit -->
           <a-tooltip overlayClassName="tooltipEdit" placement="bottom" color="#fff" trigger="click">
             <template #title>
               <div
@@ -124,7 +141,7 @@ const getTextRemoved = (isUserLogged: boolean, nameUser: string) => {
                 :class="[
                   'cursor-pointer p-2 hover:bg-[#0000001a] rounded-[6px]',
                   {
-                    hidden: item.user.id != loggedUserInfo?.id && option.id === 2,
+                    hidden: (item.isRemoved && (option.id === 2 || option.id === 3)) || (item.user.id != loggedUserInfo?.id && option.id === 2),
                   },
                 ]"
                 :key="option.id"
@@ -133,14 +150,16 @@ const getTextRemoved = (isUserLogged: boolean, nameUser: string) => {
                 {{ option.text }}
               </div>
             </template>
-            <svg class="cursor-pointer" height="22px" viewBox="0 0 22 22" width="22px">
-              <circle cx="11" cy="6" fill="var(--placeholder-icon)" r="2" stroke-width="1px"></circle>
-              <circle cx="11" cy="11" fill="var(--placeholder-icon)" r="2" stroke-width="1px"></circle>
-              <circle cx="11" cy="16" fill="var(--placeholder-icon)" r="2" stroke-width="1px"></circle>
-            </svg>
+            <IconWrapper :width="`[22px]`" :height="`[22]`" :isHideBg="true">
+              <svg class="fill-[#65676b80] hover:fill-[#65676b]" height="22px" viewBox="0 0 22 22" width="22px">
+                <circle cx="11" cy="6" fill="var(--placeholder-icon)" r="2" stroke-width="1px"></circle>
+                <circle cx="11" cy="11" fill="var(--placeholder-icon)" r="2" stroke-width="1px"></circle>
+                <circle cx="11" cy="16" fill="var(--placeholder-icon)" r="2" stroke-width="1px"></circle>
+              </svg>
+            </IconWrapper>
           </a-tooltip>
         </div>
-        <a-tooltip overlayClassName="tooltipMessage" placement="left" color="#1c1e21e6">
+        <a-tooltip overlayClassName="tooltipMessage" :placement="loggedUserInfo?.id == item?.user?.id ? 'right' : 'left'" color="#1c1e21e6">
           <template #title>
             {{ getTime(item?.created_at) }}
           </template>
@@ -162,24 +181,15 @@ const getTextRemoved = (isUserLogged: boolean, nameUser: string) => {
 </template>
 
 <style>
-.messageContainer .iconRight,
-.messageContainer .iconLeft {
+.messageContainer .actionMessage {
   display: none;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
 }
 
-.messageContainer .iconLeft {
-  left: -54px;
+.messageContainer .iconRight, .messageContainer .iconLeft .actionMessage {
+  flex-direction: row-reverse;
 }
 
-.messageContainer .iconRight {
-  right: -54px;
-}
-
-.messageContainer:hover .iconRight,
-.messageContainer:hover .iconLeft {
+.messageContainer:hover .actionMessage {
   display: flex;
 }
 

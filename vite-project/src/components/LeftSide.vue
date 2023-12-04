@@ -72,7 +72,7 @@ const handleRemoveUnreadMessage = () => {
         </div>
       </div>
       <div class="w-full relative text-gray-600 focus-within:text-gray-400 flex-1">
-        <span class="absolute inset-y-0 left-0 flex items-center pl-4">
+        <span class="absolute h-[34px] inset-y-0 left-0 flex items-center pl-4">
           <button type="submit" class="focus:outline-none focus:shadow-outline">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
               <path
@@ -85,7 +85,7 @@ const handleRemoveUnreadMessage = () => {
         <input
           type="search"
           name="q"
-          class="rounded-full w-full py-2 text-sm bg-[#f5f5f5] pl-12 focus:outline-none text-[#707991] placeholder-[#707991]"
+          class="rounded-full w-full py-2 text-sm bg-[#f5f5f5] pl-12 pr-4 focus:outline-none text-[#707991] placeholder-[#707991]"
           placeholder="Tìm kiếm trên Messenger"
           autocomplete="off"
         />
